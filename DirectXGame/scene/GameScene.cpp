@@ -4,16 +4,30 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	delete _model;
+	delete _enemyObj;
+}
 
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	// ForwardObj
+	_model = Model::Create();     // TempModel
+	_viewProjection.Initialize(); // ViewProjection
+	// Obj
+	_enemyObj = new Enemy();
+	Vector3 enemyPos = {0, 0, 0};
+	_enemyObj->Initalize(&_viewProjection, enemyPos);
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+	// Obj
+	_enemyObj->Update();
+}
 
 void GameScene::Draw() {
 
@@ -41,6 +55,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	_enemyObj->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

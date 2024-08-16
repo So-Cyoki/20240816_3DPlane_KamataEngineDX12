@@ -2,6 +2,7 @@
 
 #include "Audio.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
 #include "Sprite.h"
@@ -43,6 +44,12 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	// 自分の変数
+	ViewProjection _viewProjection;
+	Model* _model = nullptr;
+	// Obj
+	Enemy* _enemyObj = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
