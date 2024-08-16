@@ -6,6 +6,7 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete _model;
+	delete _cameraConObj;
 	delete _enemyObj;
 }
 
@@ -15,9 +16,11 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	// ForwardObj
+	// FrontObj
 	_model = Model::Create();     // TempModel
 	_viewProjection.Initialize(); // ViewProjection
+	_cameraConObj = new CameraController();
+	_cameraConObj->Initialize();
 	// Obj
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, 0};
@@ -25,6 +28,16 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	// DebugText
+	ImGui::Begin("DeBug Window");
+	ImGui::DragFloat3("Camera Translate", &_cameraConObj->_cameraPos.x, 0.01f);
+	ImGui::DragFloat3("Camera Rotate", &_cameraConObj->_cameraRotate.x, 0.01f);
+	ImGui::End();
+	// CameraController
+	_cameraConObj->Update();
+	_viewProjection.matView = _cameraConObj->GetViewProjection().matView;
+	_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
+	_viewProjection.TransferMatrix();
 	// Obj
 	_enemyObj->Update();
 }

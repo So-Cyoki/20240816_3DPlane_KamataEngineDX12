@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "CameraController.h"
 #include "DirectXCommon.h"
 #include "Enemy.h"
 #include "Input.h"
@@ -8,6 +9,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include <imgui.h>
 
 /// <summary>
 /// ゲームシーン
@@ -46,8 +48,10 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 
 	// 自分の変数
+	// FrontObj
 	ViewProjection _viewProjection;
 	Model* _model = nullptr;
+	CameraController* _cameraConObj = nullptr;
 	// Obj
 	Enemy* _enemyObj = nullptr;
 
