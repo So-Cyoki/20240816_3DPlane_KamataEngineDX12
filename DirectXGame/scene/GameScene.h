@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
@@ -53,6 +54,7 @@ private: // メンバ変数
 	Model* _model = nullptr;
 	CameraController* _cameraConObj = nullptr;
 	// Obj
+	Player* _playerObj = nullptr;
 	Enemy* _enemyObj = nullptr;
 
 	/// <summary>

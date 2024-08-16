@@ -7,6 +7,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete _model;
 	delete _cameraConObj;
+	delete _playerObj;
 	delete _enemyObj;
 }
 
@@ -22,6 +23,10 @@ void GameScene::Initialize() {
 	_cameraConObj = new CameraController();
 	_cameraConObj->Initialize();
 	// Obj
+	_playerObj = new Player();
+	Vector3 playerPos = {0, 0, -70};
+	_playerObj->Initalize(&_viewProjection, playerPos);
+	_cameraConObj->SetTarget(_playerObj);
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, 0};
 	_enemyObj->Initalize(&_viewProjection, enemyPos);
@@ -30,8 +35,8 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	// DebugText
 	ImGui::Begin("DeBug Window");
-	ImGui::DragFloat3("Camera Translate", &_cameraConObj->_cameraPos.x, 0.01f);
-	ImGui::DragFloat3("Camera Rotate", &_cameraConObj->_cameraRotate.x, 0.01f);
+	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
+	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
 	ImGui::End();
 	// CameraController
 	_cameraConObj->Update();
@@ -39,6 +44,7 @@ void GameScene::Update() {
 	_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
 	_viewProjection.TransferMatrix();
 	// Obj
+	_playerObj->Update();
 	_enemyObj->Update();
 }
 
@@ -69,6 +75,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	_playerObj->Draw();
 	_enemyObj->Draw();
 
 	// 3Dオブジェクト描画後処理

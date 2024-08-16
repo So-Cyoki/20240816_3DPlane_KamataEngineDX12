@@ -1,9 +1,7 @@
 #pragma once
-#include "DebugText.h"
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include <cmath>
 class Enemy {
 private:
 	WorldTransform _worldTransform;
