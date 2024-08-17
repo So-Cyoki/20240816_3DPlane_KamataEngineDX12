@@ -31,7 +31,7 @@ void Player::Update() {
 	_worldTransform.rotation_ = _playerRotate;
 	_worldTransform.UpdateMatrix(); // 行列計算
 
-	_aabb = My3dTools::GetAABB(_size.x, _size.y, _size.z, GetWorldPosition());
+	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
 void Player::Draw() { _model->Draw(_worldTransform, *_viewProjection); }

@@ -9,8 +9,8 @@ private:
 	ViewProjection* _viewProjection = nullptr;
 	Model* _model = nullptr;
 
-	AABB _aabb{};
-	Vector3 _size = {6.3f, 4.f, 11.8f};
+	Sphere _sphere{};
+	float _radius = 5.f;
 
 public:
 	~Enemy();
@@ -19,5 +19,5 @@ public:
 	void Draw();
 
 	const Vector3 GetWorldPosition();
-	const AABB& GetAABB() { return _aabb; };
+	const Sphere& GetSphere() { return _sphere; };
 };

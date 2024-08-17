@@ -28,13 +28,20 @@ public:
 		closestPoint.x = {std::clamp(sphere.center.x, aabb.min.x, aabb.max.x)};
 		closestPoint.y = {std::clamp(sphere.center.y, aabb.min.y, aabb.max.y)};
 		closestPoint.z = {std::clamp(sphere.center.z, aabb.min.z, aabb.max.z)};
-		Vector3 v = closestPoint * sphere.center;
+		Vector3 v = closestPoint - sphere.center;
 		float distance = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 		if (distance <= sphere.radius)
 			return true;
 
 		return false;
 	};
+	static bool IsCollision(const Sphere& s1, const Sphere& s2) {
+		Vector3 v = s2.center - s1.center;
+		float distance = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+		if (distance <= s1.radius + s2.radius)
+			return true;
+		return false;
+	}
 
 	// ツール
 	static AABB GetAABB(float width, float height, float depth, Vector3 worldPos) {

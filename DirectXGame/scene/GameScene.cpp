@@ -42,7 +42,7 @@ void GameScene::Update() {
 	_playerObj->Update();
 	_enemyObj->Update();
 	// Collision
-	bool isCollision = My3dTools::IsCollision(_playerObj->GetAABB(), _enemyObj->GetAABB());
+	bool isCollision = My3dTools::IsCollision(_playerObj->GetSphere(), _enemyObj->GetSphere());
 
 	// DebugText
 	ImGui::Begin("DeBug Window");
