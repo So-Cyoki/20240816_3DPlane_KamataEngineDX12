@@ -12,6 +12,16 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position) {
 
 void Enemy::Update() {
 	_worldTransform.UpdateMatrix(); // 行列計算
+
+	_aabb = My3dTools::GetAABB(_size.x, _size.y, _size.z, GetWorldPosition());
 }
 
 void Enemy::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
+
+const Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos{};
+	worldPos.x = _worldTransform.matWorld_.m[3][0];
+	worldPos.y = _worldTransform.matWorld_.m[3][1];
+	worldPos.z = _worldTransform.matWorld_.m[3][2];
+	return worldPos;
+}

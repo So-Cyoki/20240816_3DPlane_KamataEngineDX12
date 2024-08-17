@@ -33,11 +33,6 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	// DebugText
-	ImGui::Begin("DeBug Window");
-	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
-	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
-	ImGui::End();
 	// CameraController
 	_cameraConObj->Update();
 	_viewProjection.matView = _cameraConObj->GetViewProjection().matView;
@@ -46,6 +41,15 @@ void GameScene::Update() {
 	// Obj
 	_playerObj->Update();
 	_enemyObj->Update();
+	// Collision
+	bool isCollision = My3dTools::IsCollision(_playerObj->GetAABB(), _enemyObj->GetAABB());
+
+	// DebugText
+	ImGui::Begin("DeBug Window");
+	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
+	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
+	ImGui::Text("IsCollision %s", isCollision ? "true" : "false");
+	ImGui::End();
 }
 
 void GameScene::Draw() {
