@@ -11,6 +11,7 @@ private:
 
 	Vector3 _playerPos{};
 	Vector3 _playerRotate{};
+
 	float _speed = 1;
 	float _speedRotate = 0.01f;
 
