@@ -20,6 +20,7 @@ private:
 	float _speedRotate = 0.01f;
 
 	void Move();
+	void MouseCamera(Vector3* cameraPos, Vector3* cameraRotate);
 
 public:
 	~Player();

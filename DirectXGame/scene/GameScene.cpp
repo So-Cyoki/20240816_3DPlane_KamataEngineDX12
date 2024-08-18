@@ -48,7 +48,13 @@ void GameScene::Update() {
 	ImGui::Begin("DeBug Window");
 	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
 	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
 	ImGui::Text("IsCollision %s", isCollision ? "true" : "false");
+	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
+	ImGui::Text("MousePos( %f , %f )", mousePos.x, mousePos.y);
+	ImGui::Text("MouseWheel %d", Input::GetInstance()->GetWheel());
 	ImGui::End();
 }
 
