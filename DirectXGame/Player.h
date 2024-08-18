@@ -19,8 +19,8 @@ private:
 	float _speed = 1;
 	float _speedRotate = 0.01f;
 
+	Vector2 preMousePos{}; // 鼠标前一帧的位置，用以计算鼠标对方向的移动
 	void Move();
-	void MouseCamera(Vector3* cameraPos, Vector3* cameraRotate);
 
 public:
 	~Player();

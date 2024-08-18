@@ -7,8 +7,9 @@ private:
 	ViewProjection _viewProjection; // 自身の位置(カメラだから、ViewProjectionにしないと)
 	Vector3 _cameraPos = {0, 20, -100};
 	Vector3 _cameraRotate = {0.4f, 0, 0};
-	Vector3 _targetPos{};                 // 目標の位置
-	Vector3 _targetOffset = {0, 10, -10}; // カメラとターゲットの距離の差
+	Vector3 _targetPos{};              // 目標の位置
+	Vector3 _targetRotate{};           // 目標の回転
+	Vector3 _targetOffset = {0, 5, 0}; // カメラとターゲットの距離の差
 	Player* _target = nullptr;
 
 public:
