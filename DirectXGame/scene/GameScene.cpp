@@ -9,6 +9,7 @@ GameScene::~GameScene() {
 	delete _cameraConObj;
 	delete _playerObj;
 	delete _enemyObj;
+	delete _skydomeObj;
 }
 
 void GameScene::Initialize() {
@@ -23,6 +24,8 @@ void GameScene::Initialize() {
 	_cameraConObj = new CameraController();
 	_cameraConObj->Initialize();
 	// Obj
+	_skydomeObj = new Skydome();
+	_skydomeObj->Initialize(&_viewProjection);
 	_playerObj = new Player();
 	Vector3 playerPos = {0, 0, -70};
 	_playerObj->Initalize(&_viewProjection, playerPos);
@@ -39,11 +42,13 @@ void GameScene::Update() {
 	_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
 	_viewProjection.TransferMatrix();
 	// Obj
+	_skydomeObj->Update();
 	_playerObj->Update();
 	_enemyObj->Update();
+
+#ifdef _DEBUG
 	// Collision
 	bool isCollision = My3dTools::IsCollision(_playerObj->GetSphere(), _enemyObj->GetSphere());
-
 	// DebugText
 	ImGui::Begin("DeBug Window");
 	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
@@ -54,7 +59,9 @@ void GameScene::Update() {
 	ImGui::Text("IsCollision %s", isCollision ? "true" : "false");
 	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
+	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
 	ImGui::End();
+#endif
 }
 
 void GameScene::Draw() {
@@ -84,6 +91,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	_skydomeObj->Draw();
 	_playerObj->Draw();
 	_enemyObj->Draw();
 

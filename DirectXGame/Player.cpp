@@ -17,34 +17,35 @@ void Player::Move() {
 
 	// キーボードで移動
 	if (Input::GetInstance()->PushKey(DIK_W)) {
-		move = move + front;
+		// move = move + front;
+		_moveGasPedal += _moveSpeed;
 	} else if (Input::GetInstance()->PushKey(DIK_S)) {
-		move = move + (front * -1);
+		// move = move + (front * -1);
+		_moveGasPedal -= _moveSpeed;
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
-		move = move + (right * -1);
-	} else if (Input::GetInstance()->PushKey(DIK_A)) {
+	if (Input::GetInstance()->PushKey(DIK_A)) {
 		move = move + right;
+		_moveGasPedal *= 0.5f;
+	} else if (Input::GetInstance()->PushKey(DIK_D)) {
+		move = move + (right * -1);
+		_moveGasPedal *= 0.5f;
 	}
-	// 相对静止机制
+	_moveGasPedal = std::clamp(_moveGasPedal, -_moveGasMax / 2, _moveGasMax); // 油门速度限制
+	move += (front * (_moveGasPedal >= 0 ? 1 : -1));                          // 因为发动机，所以一直都有一个向正前方飞行的力
+	// 相对静止控制机制（刹车）
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL)) {
-		_velocity.x = std::lerp(_velocity.x, 0.f, _moveSpeed);
-		_velocity.y = std::lerp(_velocity.y, 0.f, _moveSpeed);
-		_velocity.z = std::lerp(_velocity.z, 0.f, _moveSpeed);
+		_velocity.x = std::lerp(_velocity.x, 0.f, _moveBrakeSpeed);
+		_velocity.y = std::lerp(_velocity.y, 0.f, _moveBrakeSpeed);
+		_velocity.z = std::lerp(_velocity.z, 0.f, _moveBrakeSpeed);
+		_moveGasPedal = std::lerp(_moveGasPedal, 0.f, _moveBrakeSpeed);
 	}
 
-	// カメラをマウスで回転
-	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
-	float mousePosX = mousePos.x, mousePosY = mousePos.y;
-	Vector2 currentMousePos{};
-	if (Input::GetInstance()->IsPressMouse(1)) {
-		// マウスの右キー
-		currentMousePos = {float(mousePosX), float(mousePosY)};
-		_playerRotate.x += (currentMousePos.y - preMousePos.y) * _rotationSpeed * 0.01f;
-		_playerRotate.y += (currentMousePos.x - preMousePos.x) * _rotationSpeed * 0.01f;
-		preMousePos = {float(mousePosX), float(mousePosY)};
-	} else {
-		preMousePos = {float(mousePosX), float(mousePosY)};
+	// 鼠标控制镜头旋转
+	Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
+	Vector2 mouseRotate = {float(mouseMove.lX), float(mouseMove.lY)};
+	if (Input::GetInstance()->PushKey(DIK_LSHIFT)) {
+		_playerRotate.x += mouseRotate.y * _rotationSpeed * 0.01f;
+		_playerRotate.y += mouseRotate.x * _rotationSpeed * 0.01f;
 	}
 
 	// 正規化、速度は同じにするために
@@ -52,9 +53,10 @@ void Player::Move() {
 		move.Normalize();
 
 	// 物理计算部分
-	_accelerations = move * _moveSpeed;
+	_accelerations = move * std::fabsf(_moveGasPedal);
 	_velocity += _accelerations;
 
+	// 速度限制
 	_velocity.x = std ::clamp(_velocity.x, -_moveMax, _moveMax);
 	_velocity.y = std ::clamp(_velocity.y, -_moveMax, _moveMax);
 	_velocity.z = std ::clamp(_velocity.z, -_moveMax, _moveMax);

@@ -8,10 +8,14 @@
 #include "Model.h"
 #include "My3DTools.h"
 #include "Player.h"
+#include "Skydome.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+
+#ifdef _DEBUG
 #include <imgui.h>
+#endif
 
 /// <summary>
 /// ゲームシーン
@@ -55,6 +59,7 @@ private: // メンバ変数
 	Model* _model = nullptr;
 	CameraController* _cameraConObj = nullptr;
 	// Obj
+	Skydome* _skydomeObj = nullptr;
 	Player* _playerObj = nullptr;
 	Enemy* _enemyObj = nullptr;
 

@@ -33,7 +33,8 @@ public:
 	// 深度限界（手前側）
 	float nearZ = 0.1f;
 	// 深度限界（奥側）
-	float farZ = 1000.0f;
+	// float farZ = 1000.0f;
+	float farZ = 2100.0f;
 #pragma endregion
 
 	// ビュー行列

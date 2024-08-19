@@ -6,11 +6,13 @@
 /// ウィンドウズアプリケーション
 /// </summary>
 class WinApp {
-public: // 静的メンバ変数
-	// ウィンドウサイズ
+public:                                   // 静的メンバ変数
+	                                      // ウィンドウサイズ
 	static const int kWindowWidth = 1280; // 横幅
 	static const int kWindowHeight = 720; // 縦幅
-	// ウィンドウクラス名
+	// static const int kWindowWidth = 1920;  // 横幅
+	// static const int kWindowHeight = 1080; // 縦幅
+	//  ウィンドウクラス名
 	static const wchar_t kWindowClassName[];
 
 	enum class SizeChangeMode {
@@ -44,9 +46,7 @@ public: // メンバ関数
 	/// <param name="clientWidth">ウィンドウのクライアント領域の初期幅</param>
 	/// <param name="clientHeight">ウィンドウのクライアント領域の初期高さ</param>
 	/// </summary>
-	void CreateGameWindow(
-	    const wchar_t* title = L"DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW,
-	    int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
+	void CreateGameWindow(const wchar_t* title = L"DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW, int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
 
 	/// <summary>
 	/// ゲームウィンドウの破棄
