@@ -17,11 +17,31 @@ public:
 		this->z += other.z;
 		return *this;
 	}
+	Vector3& operator-=(const Vector3& other) {
+		this->x -= other.x;
+		this->y -= other.y;
+		this->z -= other.z;
+		return *this;
+	}
+	Vector3& operator*=(const float scalar) {
+		this->x *= scalar;
+		this->y *= scalar;
+		this->z *= scalar;
+		return *this;
+	}
+	Vector3& operator*=(const int scalar) {
+		this->x *= scalar;
+		this->y *= scalar;
+		this->z *= scalar;
+		return *this;
+	}
 	Vector3 operator+(const Vector3 other) const { return Vector3(x + other.x, y + other.y, z + other.z); }
 	Vector3 operator-(const Vector3 other) const { return Vector3{x - other.x, y - other.y, z - other.z}; }
 	Vector3 operator*(const Vector3 other) const { return Vector3{x * other.x, y * other.y, z * other.z}; }
 	Vector3 operator*(const float scalar) const { return Vector3{x * scalar, y * scalar, z * scalar}; }
 	Vector3 operator*(const int scalar) const { return Vector3{x * scalar, y * scalar, z * scalar}; }
+	friend Vector3 operator*(const float scalar, const Vector3& v) { return Vector3{scalar * v.x, scalar * v.y, scalar * v.z}; }
+	friend Vector3 operator*(const int scalar, const Vector3& v) { return Vector3{scalar * v.x, scalar * v.y, scalar * v.z}; }
 
 	// 正規化
 	Vector3 Normalize() {

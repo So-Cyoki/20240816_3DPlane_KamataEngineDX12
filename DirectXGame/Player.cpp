@@ -1,11 +1,7 @@
 #include "Player.h"
 
 void Player::Move() {
-	float moveSpeed = 0.1f;     // キーボードで移動のスピード
-	float rotationSpeed = 0.4f; // マウスの右キーで回るスピード
-
 	Vector3 front{}, right{}, up{}, move{}; // カメラの前・横・上の向きと総合の移動ベクトル
-	bool isMouseMove = false;               // マウスで移動
 	// カメラの前方向を計算
 	front.x = sinf(_playerRotate.y) * cosf(_playerRotate.x);
 	front.y = -sinf(_playerRotate.x);
@@ -30,6 +26,12 @@ void Player::Move() {
 	} else if (Input::GetInstance()->PushKey(DIK_A)) {
 		move = move + right;
 	}
+	// 相对静止机制
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL)) {
+		_velocity.x = std::lerp(_velocity.x, 0.f, _moveSpeed);
+		_velocity.y = std::lerp(_velocity.y, 0.f, _moveSpeed);
+		_velocity.z = std::lerp(_velocity.z, 0.f, _moveSpeed);
+	}
 
 	// カメラをマウスで回転
 	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
@@ -38,23 +40,26 @@ void Player::Move() {
 	if (Input::GetInstance()->IsPressMouse(1)) {
 		// マウスの右キー
 		currentMousePos = {float(mousePosX), float(mousePosY)};
-		_playerRotate.x += (currentMousePos.y - preMousePos.y) * rotationSpeed * 0.01f;
-		_playerRotate.y += (currentMousePos.x - preMousePos.x) * rotationSpeed * 0.01f;
+		_playerRotate.x += (currentMousePos.y - preMousePos.y) * _rotationSpeed * 0.01f;
+		_playerRotate.y += (currentMousePos.x - preMousePos.x) * _rotationSpeed * 0.01f;
 		preMousePos = {float(mousePosX), float(mousePosY)};
 	} else {
 		preMousePos = {float(mousePosX), float(mousePosY)};
 	}
 
 	// 正規化、速度は同じにするために
-	if (!isMouseMove) {
-		if (move.x != 0 || move.y != 0 || move.z != 0) {
-			move.Normalize();
-			move = move * moveSpeed;
-		}
-	}
-	_playerPos.x += move.x;
-	_playerPos.y += move.y;
-	_playerPos.z += move.z;
+	if (move.x != 0 || move.y != 0 || move.z != 0)
+		move.Normalize();
+
+	// 物理计算部分
+	_accelerations = move * _moveSpeed;
+	_velocity += _accelerations;
+
+	_velocity.x = std ::clamp(_velocity.x, -_moveMax, _moveMax);
+	_velocity.y = std ::clamp(_velocity.y, -_moveMax, _moveMax);
+	_velocity.z = std ::clamp(_velocity.z, -_moveMax, _moveMax);
+
+	_playerPos += _velocity;
 }
 
 Player::~Player() { delete _model; }

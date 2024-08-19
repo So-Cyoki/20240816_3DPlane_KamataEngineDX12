@@ -1,6 +1,6 @@
 #include "Matrix4x4.h"
 
-Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
+Matrix4x4 Matrix4x4::Multiply(Matrix4x4 m1, Matrix4x4 m2) {
 	Matrix4x4 result{};
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -10,7 +10,7 @@ Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
 	return result;
 }
 
-Matrix4x4 MakeAffineMatrix(Vector3 scale, Vector3 rotation, Vector3 translation) {
+Matrix4x4 Matrix4x4::MakeAffineMatrix(Vector3 scale, Vector3 rotation, Vector3 translation) {
 	// Scale
 	Matrix4x4 mScale = {0};
 	mScale.m[0][0] = scale.x;

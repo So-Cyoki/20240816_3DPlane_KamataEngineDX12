@@ -52,9 +52,8 @@ void GameScene::Update() {
 	ImGui::Separator();
 	ImGui::Spacing();
 	ImGui::Text("IsCollision %s", isCollision ? "true" : "false");
-	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
-	ImGui::Text("MousePos( %f , %f )", mousePos.x, mousePos.y);
-	ImGui::Text("MouseWheel %d", Input::GetInstance()->GetWheel());
+	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
+	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::End();
 }
 
