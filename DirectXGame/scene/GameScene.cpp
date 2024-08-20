@@ -33,6 +33,8 @@ void GameScene::Initialize() {
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, 0};
 	_enemyObj->Initalize(&_viewProjection, enemyPos);
+	_earthBall = new EarthBall;
+	_earthBall->Initialize(&_viewProjection, _playerObj);
 }
 
 void GameScene::Update() {
@@ -45,6 +47,7 @@ void GameScene::Update() {
 	_skydomeObj->Update();
 	_playerObj->Update();
 	_enemyObj->Update();
+	_earthBall->Update();
 
 #ifdef _DEBUG
 	// Collision
@@ -92,6 +95,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	_skydomeObj->Draw();
+	_earthBall->Draw();
 	_playerObj->Draw();
 	_enemyObj->Draw();
 

@@ -61,7 +61,13 @@ void Player::Move() {
 	_velocity.y = std ::clamp(_velocity.y, -_moveMax, _moveMax);
 	_velocity.z = std ::clamp(_velocity.z, -_moveMax, _moveMax);
 
-	_playerPos += _velocity;
+	// 最大范围限制，避免飞出天空球
+	Vector3 preWorldPos = GetWorldPosition();
+	if (_moveMaxLength > preWorldPos.Length()) {
+		_playerPos += _velocity; // 位置移动
+	} else {
+		_playerPos *= 0.999f;
+	}
 }
 
 Player::~Player() { delete _model; }
@@ -86,7 +92,7 @@ void Player::Update() {
 
 void Player::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 
-const Vector3 Player::GetWorldPosition() {
+const Vector3 Player::GetWorldPosition() const {
 	Vector3 worldPos{};
 	worldPos.x = _worldTransform.matWorld_.m[3][0];
 	worldPos.y = _worldTransform.matWorld_.m[3][1];

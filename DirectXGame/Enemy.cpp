@@ -18,7 +18,7 @@ void Enemy::Update() {
 
 void Enemy::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 
-const Vector3 Enemy::GetWorldPosition() {
+const Vector3 Enemy::GetWorldPosition() const {
 	Vector3 worldPos{};
 	worldPos.x = _worldTransform.matWorld_.m[3][0];
 	worldPos.y = _worldTransform.matWorld_.m[3][1];

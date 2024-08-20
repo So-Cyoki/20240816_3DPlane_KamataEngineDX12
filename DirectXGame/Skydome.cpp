@@ -7,7 +7,7 @@ void Skydome::Initialize(ViewProjection* view) {
 	_viewProjection = view;
 	_model = Model::CreateFromOBJ("Skydome", true);
 
-	_worldTransform.scale_ = {1000, 1000, 1000};
+	_worldTransform.scale_ = _scale;
 	_worldTransform.rotation_ = {0, 60 * acosf(-1) / 180.f, 0};
 }
 

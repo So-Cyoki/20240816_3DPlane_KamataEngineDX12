@@ -3,6 +3,7 @@
 #include "Audio.h"
 #include "CameraController.h"
 #include "DirectXCommon.h"
+#include "EarthBall.h"
 #include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
@@ -62,6 +63,7 @@ private: // メンバ変数
 	Skydome* _skydomeObj = nullptr;
 	Player* _playerObj = nullptr;
 	Enemy* _enemyObj = nullptr;
+	EarthBall* _earthBall = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

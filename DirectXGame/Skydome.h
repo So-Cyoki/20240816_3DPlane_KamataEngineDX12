@@ -11,6 +11,8 @@ private:
 	ViewProjection* _viewProjection = nullptr;
 	Model* _model = nullptr;
 
+	Vector3 _scale = {1000, 1000, 1000};
+
 public:
 	~Skydome();
 	void Initialize(ViewProjection* view);
