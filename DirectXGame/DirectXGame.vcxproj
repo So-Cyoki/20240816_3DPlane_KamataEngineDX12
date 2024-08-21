@@ -113,6 +113,7 @@
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="EarthBall.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="EarthBall.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="GameUI.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\My3DTools.h" />

@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "My3DTools.h"
 #include "ViewProjection.h"
+#include "WinApp.h"
 #include "WorldTransform.h"
 #include <algorithm>
 #include <cmath>
@@ -21,7 +22,7 @@ private:
 
 	// 物理移动
 	float _moveSpeed = 0.002f; // 每次增加的速度
-	float _rotationSpeed = 0.3f;
+	float _rotationSpeed = 0.3f * 0.0001f;
 	float _moveBrakeSpeed = 0.05f; // 相对静止速度，刹车（0~1）
 	float _moveMax = 1.5f;
 	float _moveGasPedal = 0; // 用这个来控制油门的速度
@@ -29,7 +30,13 @@ private:
 	Vector3 _velocity{};
 	Vector3 _accelerations{};
 
+	// 瞄准点
+	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
+	Vector2 _arrowMove = {_screenWidth / 2, _screenHeight / 2};  // 代表移动的方向
+	Vector2 _arrowMouse = {_screenWidth / 2, _screenHeight / 2}; // 代表鼠标移动的方向
+
 	void Move();
+	void ArrowMove();
 
 public:
 	~Player();
@@ -46,4 +53,7 @@ public:
 	void SetVelocity(const Vector3& vel) { _velocity = vel; };
 	const Vector3& GetAccelerations() const { return _accelerations; };
 	const float& GetMoveGasPedal() const { return _moveGasPedal; };
+	const float& GetRotationSpeed() const { return _rotationSpeed; };
+	const Vector2& GetArrowMove() const { return _arrowMove; };
+	const Vector2& GetArrowMouse() const { return _arrowMouse; };
 };

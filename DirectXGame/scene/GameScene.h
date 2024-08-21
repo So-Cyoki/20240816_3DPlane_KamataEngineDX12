@@ -5,6 +5,7 @@
 #include "DirectXCommon.h"
 #include "EarthBall.h"
 #include "Enemy.h"
+#include "GameUI.h"
 #include "Input.h"
 #include "Model.h"
 #include "My3DTools.h"
@@ -64,6 +65,8 @@ private: // メンバ変数
 	Player* _playerObj = nullptr;
 	Enemy* _enemyObj = nullptr;
 	EarthBall* _earthBall = nullptr;
+	// UI
+	GameUI* _gameUIObj = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

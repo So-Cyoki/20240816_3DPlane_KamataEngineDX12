@@ -41,12 +41,12 @@ void Player::Move() {
 	}
 
 	// 鼠标控制镜头旋转
-	Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
-	Vector2 mouseRotate = {float(mouseMove.lX), float(mouseMove.lY)};
-	if (Input::GetInstance()->PushKey(DIK_LSHIFT)) {
-		_playerRotate.x += mouseRotate.y * _rotationSpeed * 0.01f;
-		_playerRotate.y += mouseRotate.x * _rotationSpeed * 0.01f;
-	}
+	// Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
+	// Vector2 mouseRotate = {float(mouseMove.lY), float(mouseMove.lX)};
+	//_playerRotate.x += mouseRotate.x * _rotationSpeed * 0.01f;
+	//_playerRotate.y += mouseRotate.y * _rotationSpeed * 0.01f;
+	_playerRotate.x += (_arrowMouse.y - _arrowMove.y) * _rotationSpeed;
+	_playerRotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
 
 	// 正規化、速度は同じにするために
 	if (move.x != 0 || move.y != 0 || move.z != 0)
@@ -70,6 +70,16 @@ void Player::Move() {
 	}
 }
 
+void Player::ArrowMove() {
+	// 不断的返回屏幕中心点
+	_arrowMouse.x = std::lerp(_arrowMouse.x, _screenWidth / 2, _rotationSpeed * 1000);
+	_arrowMouse.y = std::lerp(_arrowMouse.y, _screenHeight / 2, _rotationSpeed * 1000);
+	// 根据鼠标移动
+	Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
+	Vector2 mouseMovePos = {float(mouseMove.lX), float(mouseMove.lY)};
+	_arrowMouse += mouseMovePos;
+}
+
 Player::~Player() { delete _model; }
 
 void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) {
@@ -81,6 +91,7 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 }
 
 void Player::Update() {
+	ArrowMove();
 	Move();
 
 	_worldTransform.translation_ = _playerPos;

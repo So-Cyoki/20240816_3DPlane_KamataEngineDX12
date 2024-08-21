@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete _playerObj;
 	delete _enemyObj;
 	delete _skydomeObj;
+	delete _gameUIObj;
 }
 
 void GameScene::Initialize() {
@@ -35,6 +36,9 @@ void GameScene::Initialize() {
 	_enemyObj->Initalize(&_viewProjection, enemyPos);
 	_earthBall = new EarthBall;
 	_earthBall->Initialize(&_viewProjection, _playerObj);
+	// UI
+	_gameUIObj = new GameUI();
+	_gameUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight, _playerObj);
 }
 
 void GameScene::Update() {
@@ -48,6 +52,8 @@ void GameScene::Update() {
 	_playerObj->Update();
 	_enemyObj->Update();
 	_earthBall->Update();
+	// UI
+	_gameUIObj->Update();
 
 #ifdef _DEBUG
 	// Collision
@@ -110,6 +116,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	_gameUIObj->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
