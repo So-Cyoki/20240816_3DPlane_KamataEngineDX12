@@ -1,4 +1,5 @@
 #pragma once
+#include "Bullet.h"
 #include "Input.h"
 #include "Model.h"
 #include "My3DTools.h"
@@ -30,6 +31,11 @@ private:
 	Vector3 _velocity{};
 	Vector3 _accelerations{};
 
+	// 战斗属性
+	int _attackTime = 10;
+	int _currentTime = 0;
+	Bullet* _bullet = nullptr;
+
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
 	Vector2 _arrowMove = {_screenWidth / 2, _screenHeight / 2};  // 代表移动的方向
@@ -37,6 +43,7 @@ private:
 
 	void Move();
 	void ArrowMove();
+	void Attack();
 
 public:
 	~Player();

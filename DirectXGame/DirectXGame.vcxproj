@@ -110,6 +110,7 @@
     <ClCompile Include="3d\WorldTransform.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="EarthBall.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="base\StringUtility.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="EarthBall.h" />
     <ClInclude Include="Enemy.h" />

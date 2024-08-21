@@ -80,6 +80,17 @@ void Player::ArrowMove() {
 	_arrowMouse += mouseMovePos;
 }
 
+void Player::Attack() {
+	if (Input::GetInstance()->IsPressMouse(0)) {
+		if (_currentTime > _attackTime) {
+			_currentTime = 0;
+			_bullet = new Bullet();
+			_bullet->Initalize(_viewProjection, _playerPos, _playerRotate);
+		}
+	}
+	_currentTime++;
+}
+
 Player::~Player() { delete _model; }
 
 void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) {
@@ -93,6 +104,9 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 void Player::Update() {
 	ArrowMove();
 	Move();
+	Attack();
+	if (_bullet != nullptr)
+		_bullet->Update();
 
 	_worldTransform.translation_ = _playerPos;
 	_worldTransform.rotation_ = _playerRotate;
@@ -101,7 +115,11 @@ void Player::Update() {
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
-void Player::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
+void Player::Draw() {
+	_model->Draw(_worldTransform, *_viewProjection);
+	if (_bullet != nullptr)
+		_bullet->Draw();
+}
 
 const Vector3 Player::GetWorldPosition() const {
 	Vector3 worldPos{};
