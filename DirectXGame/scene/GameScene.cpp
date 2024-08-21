@@ -49,6 +49,7 @@ void GameScene::Update() {
 	_viewProjection.TransferMatrix();
 	// Obj
 	_skydomeObj->Update();
+	BulletManager::Updata();
 	_playerObj->Update();
 	_enemyObj->Update();
 	_earthBall->Update();
@@ -69,6 +70,7 @@ void GameScene::Update() {
 	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
+	ImGui::Text("Bullet = %d", int(BulletManager::_updatePool.size()));
 	ImGui::End();
 #endif
 }
@@ -101,6 +103,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	_skydomeObj->Draw();
+	BulletManager::Draw();
 	_earthBall->Draw();
 	_playerObj->Draw();
 	_enemyObj->Draw();

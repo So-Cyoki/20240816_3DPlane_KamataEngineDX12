@@ -40,7 +40,39 @@ public:
 			return true;
 		return false;
 	}
-
+	// 方向计算
+	static Vector3 GetDirection_front(Vector3 rotate) {
+		Vector3 front{};
+		front.x = sinf(rotate.y) * cosf(rotate.x);
+		front.y = -sinf(rotate.x);
+		front.z = cosf(rotate.y) * cosf(rotate.x);
+		front.Normalize();
+		return front;
+	};
+	static Vector3 GetDirection_up(Vector3 rotate) {
+		Vector3 front{}, right{}, up{};
+		front.x = sinf(rotate.y) * cosf(rotate.x);
+		front.y = -sinf(rotate.x);
+		front.z = cosf(rotate.y) * cosf(rotate.x);
+		front.Normalize();
+		Vector3 worldUp{0, 1, 0};
+		right = Vector3::Cross(front, worldUp);
+		right.Normalize();
+		up = Vector3::Cross(right, front);
+		up.Normalize();
+		return up;
+	};
+	static Vector3 GetDirection_right(Vector3 rotate) {
+		Vector3 front{}, right{};
+		front.x = sinf(rotate.y) * cosf(rotate.x);
+		front.y = -sinf(rotate.x);
+		front.z = cosf(rotate.y) * cosf(rotate.x);
+		front.Normalize();
+		Vector3 worldUp{0, 1, 0};
+		right = Vector3::Cross(front, worldUp);
+		right.Normalize();
+		return right;
+	};
 	// ツール
 	static AABB GetAABB(float width, float height, float depth, Vector3 worldPos) {
 		AABB aabb{};

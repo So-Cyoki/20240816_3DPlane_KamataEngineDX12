@@ -17,8 +17,8 @@ private:
 
 	Sphere _sphere{};
 	float _radius = 5.f;
-	Vector3 _playerPos{};
-	Vector3 _playerRotate{};
+	Vector3 _pos{};
+	Vector3 _rotate{};
 	float _moveMaxLength = 900; // 最大移动距离
 
 	// 物理移动
@@ -34,7 +34,6 @@ private:
 	// 战斗属性
 	int _attackTime = 10;
 	int _currentTime = 0;
-	Bullet* _bullet = nullptr;
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
@@ -54,8 +53,8 @@ public:
 	const WorldTransform& GetWorldTransform() const { return _worldTransform; };
 	const Vector3 GetWorldPosition() const;
 	const Sphere& GetSphere() const { return _sphere; };
-	const Vector3& GetPos() const { return _playerPos; };
-	const Vector3& GetRotate() const { return _playerRotate; };
+	const Vector3& GetPos() const { return _pos; };
+	const Vector3& GetRotate() const { return _rotate; };
 	const Vector3& GetVelocity() const { return _velocity; };
 	void SetVelocity(const Vector3& vel) { _velocity = vel; };
 	const Vector3& GetAccelerations() const { return _accelerations; };

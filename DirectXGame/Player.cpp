@@ -3,9 +3,9 @@
 void Player::Move() {
 	Vector3 front{}, right{}, up{}, move{}; // カメラの前・横・上の向きと総合の移動ベクトル
 	// カメラの前方向を計算
-	front.x = sinf(_playerRotate.y) * cosf(_playerRotate.x);
-	front.y = -sinf(_playerRotate.x);
-	front.z = cosf(_playerRotate.y) * cosf(_playerRotate.x);
+	front.x = sinf(_rotate.y) * cosf(_rotate.x);
+	front.y = -sinf(_rotate.x);
+	front.z = cosf(_rotate.y) * cosf(_rotate.x);
 	front.Normalize();
 	// カメラの横方向を計算
 	Vector3 worldUp{0, 1, 0};
@@ -43,10 +43,10 @@ void Player::Move() {
 	// 鼠标控制镜头旋转
 	// Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
 	// Vector2 mouseRotate = {float(mouseMove.lY), float(mouseMove.lX)};
-	//_playerRotate.x += mouseRotate.x * _rotationSpeed * 0.01f;
-	//_playerRotate.y += mouseRotate.y * _rotationSpeed * 0.01f;
-	_playerRotate.x += (_arrowMouse.y - _arrowMove.y) * _rotationSpeed;
-	_playerRotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
+	//_rotate.x += mouseRotate.x * _rotationSpeed * 0.01f;
+	//_rotate.y += mouseRotate.y * _rotationSpeed * 0.01f;
+	_rotate.x += (_arrowMouse.y - _arrowMove.y) * _rotationSpeed;
+	_rotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
 
 	// 正規化、速度は同じにするために
 	if (move.x != 0 || move.y != 0 || move.z != 0)
@@ -64,9 +64,9 @@ void Player::Move() {
 	// 最大范围限制，避免飞出天空球
 	Vector3 preWorldPos = GetWorldPosition();
 	if (_moveMaxLength > preWorldPos.Length()) {
-		_playerPos += _velocity; // 位置移动
+		_pos += _velocity; // 位置移动
 	} else {
-		_playerPos *= 0.999f;
+		_pos *= 0.999f;
 	}
 }
 
@@ -84,8 +84,9 @@ void Player::Attack() {
 	if (Input::GetInstance()->IsPressMouse(0)) {
 		if (_currentTime > _attackTime) {
 			_currentTime = 0;
-			_bullet = new Bullet();
-			_bullet->Initalize(_viewProjection, _playerPos, _playerRotate);
+			Vector3 up = My3dTools::GetDirection_up(_rotate);
+			Bullet* bullet = BulletManager::AcquireBullet(_viewProjection, _pos + up * 5, _rotate);
+			bullet->Fire();
 		}
 	}
 	_currentTime++;
@@ -98,28 +99,22 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 	_viewProjection = viewProjection;
 	_worldTransform.Initialize();
 	_worldTransform.translation_ = position;
-	_playerPos = position;
+	_pos = position;
 }
 
 void Player::Update() {
 	ArrowMove();
 	Move();
 	Attack();
-	if (_bullet != nullptr)
-		_bullet->Update();
 
-	_worldTransform.translation_ = _playerPos;
-	_worldTransform.rotation_ = _playerRotate;
+	_worldTransform.translation_ = _pos;
+	_worldTransform.rotation_ = _rotate;
 	_worldTransform.UpdateMatrix(); // 行列計算
 
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
-void Player::Draw() {
-	_model->Draw(_worldTransform, *_viewProjection);
-	if (_bullet != nullptr)
-		_bullet->Draw();
-}
+void Player::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 
 const Vector3 Player::GetWorldPosition() const {
 	Vector3 worldPos{};

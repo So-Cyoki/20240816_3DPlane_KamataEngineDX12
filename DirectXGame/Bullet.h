@@ -17,8 +17,9 @@ class Bullet {
 	Sphere _sphere{};
 	float _radius = 0.1f;
 	Vector3 _scale = {0.2f, 0.2f, 0.2f};
+	float _moveMaxLength = 1300; // 最大范围
 
-	float _speed = 1.f;
+	float _speed = 10.f;
 
 	void Move();
 
@@ -27,6 +28,7 @@ public:
 	void Initalize(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate);
 	void Update();
 	void Draw();
+	void Fire(); // 调用这个方法来发射出子弹
 
 	const Vector3 GetWorldPosition() const;
 	const Sphere& GetSphere() const { return _sphere; };
@@ -35,12 +37,13 @@ public:
 class BulletManager {
 public:
 	inline static std::vector<Bullet*> _updatePool;
-
 	inline static std::queue<Bullet*> _idlePool;
 
-	// static void BulletUpdata(Bullet::Vector2 cameraPos, vector<vector<char>> mapData, float bgHeight, float minMapSize);
-	static Bullet* AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate);
-	static void ReleaseBullet(Bullet* bullet);
+	static void Updata();
+	static void Draw();
 
-	static void BulletDraw();
+	// 获取一个对象，并且初始化
+	static Bullet* AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate);
+	// 回收一个对象
+	static void ReleaseBullet(Bullet* bullet);
 };

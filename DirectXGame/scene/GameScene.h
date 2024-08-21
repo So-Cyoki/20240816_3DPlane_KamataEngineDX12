@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "Bullet.h"
 #include "CameraController.h"
 #include "DirectXCommon.h"
 #include "EarthBall.h"
