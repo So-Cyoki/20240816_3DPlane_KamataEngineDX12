@@ -49,7 +49,10 @@ public:
 	/// <summary>
 	/// 行列を計算・転送する
 	/// </summary>
-	void UpdateMatrix();
+	void UpdateMatrix() {
+		matWorld_ = Matrix4x4::MakeAffineMatrix(scale_, rotation_, translation_);
+		TransferMatrix();
+	};
 	/// <summary>
 	/// 定数バッファの取得
 	/// </summary>

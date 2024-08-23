@@ -1,4 +1,5 @@
 #pragma once
+#include "Bullet.h"
 #include "Model.h"
 #include "My3DTools.h"
 #include "Player.h"
@@ -12,7 +13,8 @@ private:
 	ViewProjection* _viewProjection = nullptr;
 
 	Sphere _sphere{};
-	float _radius = 10.f;
+	float _radius = 7.f;
+	Vector3 _size = {10, 10, 10};
 	Player* _playerObj = nullptr;
 
 	Vector3 _rotationValue = {0, -0.005f, 0}; // 地球的自转角度

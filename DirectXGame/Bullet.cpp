@@ -16,9 +16,11 @@ void Bullet::Move() {
 	}
 }
 
+void Bullet::ToDead() { BulletManager::ReleaseBullet(this); }
+
 Bullet::~Bullet() { delete _model; }
 
-void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate) {
+void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate, Type type) {
 	_model = Model::CreateFromOBJ("Bullet", true);
 	_viewProjection = viewProjection;
 	_worldTransform.Initialize();
@@ -27,9 +29,14 @@ void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, 
 	_pos = position;
 	_rotate = rotate;
 	_worldTransform.scale_ = _scale;
+
+	_type = type;
+	_isDead = false;
 }
 
 void Bullet::Update() {
+	if (_isDead)
+		ToDead();
 	Move();
 
 	_worldTransform.translation_ = _pos;
@@ -41,7 +48,7 @@ void Bullet::Update() {
 
 void Bullet::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 
-void Bullet::Fire() { BulletManager::_updatePool.push_back(this); }
+void Bullet::Fire() { BulletManager::_updatePool_player.push_back(this); }
 
 const Vector3 Bullet::GetWorldPosition() const {
 	Vector3 worldPos{};
@@ -51,35 +58,53 @@ const Vector3 Bullet::GetWorldPosition() const {
 	return worldPos;
 }
 
-Bullet* BulletManager::AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate) {
+Bullet* BulletManager::AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate, Bullet::Type type) {
 	if (_idlePool.empty()) {
 		Bullet* bullet = new Bullet();
-		bullet->Initalize(viewProjection, position, rotate);
+		bullet->Initalize(viewProjection, position, rotate, type);
 		return bullet;
 	} else {
 		Bullet* bullet = _idlePool.front();
 		_idlePool.pop();
-		bullet->Initalize(viewProjection, position, rotate);
+		bullet->Initalize(viewProjection, position, rotate, type);
 		return bullet;
 	}
 }
 
 void BulletManager::ReleaseBullet(Bullet* bullet) {
-	auto it = std::find(_updatePool.begin(), _updatePool.end(), bullet);
-	if (it != _updatePool.end()) {
-		_updatePool.erase(it);
+	switch (bullet->_type) {
+	case Bullet::tPlayer: {
+		auto it = std::find(_updatePool_player.begin(), _updatePool_player.end(), bullet);
+		if (it != _updatePool_player.end()) {
+			_updatePool_player.erase(it);
+		}
+		break;
+	}
+	case Bullet::tEnemy: {
+		auto it = std::find(_updatePool_enemy.begin(), _updatePool_enemy.end(), bullet);
+		if (it != _updatePool_enemy.end()) {
+			_updatePool_enemy.erase(it);
+		}
+		break;
+	}
 	}
 	_idlePool.push(bullet);
 }
 
 void BulletManager::Updata() {
-	for (Bullet* it : _updatePool) {
+	for (Bullet* it : _updatePool_player) {
+		it->Update();
+	}
+	for (Bullet* it : _updatePool_enemy) {
 		it->Update();
 	}
 }
 
 void BulletManager::Draw() {
-	for (Bullet* it : _updatePool) {
+	for (Bullet* it : _updatePool_player) {
+		it->Draw();
+	}
+	for (Bullet* it : _updatePool_enemy) {
 		it->Draw();
 	}
 }

@@ -47,6 +47,11 @@ void Player::Move() {
 	//_rotate.y += mouseRotate.y * _rotationSpeed * 0.01f;
 	_rotate.x += (_arrowMouse.y - _arrowMove.y) * _rotationSpeed;
 	_rotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
+	// 随着左右偏移飞机也做出左右翻转的动画
+	// if ((_arrowMouse.x - _arrowMove.x) > 0)
+	//	_rotate.z = std::lerp(_rotate.z, -1.f, 0.01f);
+	// else
+	//	_rotate.z = std::lerp(_rotate.z, 1.f, 0.01f);
 
 	// 正規化、速度は同じにするために
 	if (move.x != 0 || move.y != 0 || move.z != 0)
@@ -81,15 +86,22 @@ void Player::ArrowMove() {
 }
 
 void Player::Attack() {
-	if (Input::GetInstance()->IsPressMouse(0)) {
-		if (_currentTime > _attackTime) {
-			_currentTime = 0;
-			Vector3 up = My3dTools::GetDirection_up(_rotate);
-			Bullet* bullet = BulletManager::AcquireBullet(_viewProjection, _pos + up * 5, _rotate);
-			bullet->Fire();
-		}
+	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch(_attackTime, 1)) {
+		Vector3 up = My3dTools::GetDirection_up(_rotate);
+		Vector3 front = My3dTools::GetDirection_front(_rotate);
+		Vector3 bulletBornPos = _pos + up * 5 + front * -20;
+		Bullet* bullet = BulletManager::AcquireBullet(_viewProjection, bulletBornPos, _rotate, Bullet::tPlayer);
+		bullet->Fire();
 	}
-	_currentTime++;
+}
+
+bool Player::FrameTimeWatch(int frame, int index) {
+	if (_currentTimes[index] <= 0) {
+		_currentTimes[index] = frame;
+		return true;
+	}
+	_currentTimes[index]--;
+	return false;
 }
 
 Player::~Player() { delete _model; }

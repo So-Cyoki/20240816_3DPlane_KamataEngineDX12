@@ -63,6 +63,7 @@ void GameScene::Update() {
 	ImGui::Begin("DeBug Window");
 	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
 	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
+	ImGui::DragFloat3("Player Rotate", (float*)&_playerObj->GetRotate(), 0.01f);
 	ImGui::Spacing();
 	ImGui::Separator();
 	ImGui::Spacing();
@@ -70,7 +71,7 @@ void GameScene::Update() {
 	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
-	ImGui::Text("Bullet = %d", int(BulletManager::_updatePool.size()));
+	ImGui::Text("Bullet = %d", int(BulletManager::_updatePool_player.size()));
 	ImGui::End();
 #endif
 }

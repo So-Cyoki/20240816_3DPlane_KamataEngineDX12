@@ -1,11 +1,21 @@
 #include "EarthBall.h"
 
 void EarthBall::IsCollision() {
+	// Player
 	bool IsPlayer = My3dTools::IsCollision(_sphere, _playerObj->GetSphere());
 	if (IsPlayer) {
 		Vector3 vel = _playerObj->GetVelocity();
 		vel *= -1;
 		_playerObj->SetVelocity(vel);
+	}
+	// Bullet
+	for (Bullet* it : BulletManager::_updatePool_player) {
+		if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
+			it->SetIsDead(true);
+	}
+	for (Bullet* it : BulletManager::_updatePool_enemy) {
+		if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
+			it->SetIsDead(true);
 	}
 }
 
@@ -17,7 +27,7 @@ void EarthBall::Initialize(ViewProjection* view, Player* playerObj) {
 	_viewProjection = view;
 	_playerObj = playerObj;
 
-	_worldTransform.scale_ = {_radius, _radius, _radius};
+	_worldTransform.scale_ = _size;
 	_worldTransform.rotation_ = {0, 0, -23.5f * acosf(-1) / 180.f};
 }
 

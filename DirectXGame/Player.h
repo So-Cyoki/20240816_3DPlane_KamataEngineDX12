@@ -33,7 +33,6 @@ private:
 
 	// 战斗属性
 	int _attackTime = 10;
-	int _currentTime = 0;
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
@@ -43,6 +42,8 @@ private:
 	void Move();
 	void ArrowMove();
 	void Attack();
+	int _currentTimes[31] = {0}; // 这个用于计时器的使用
+	bool FrameTimeWatch(int frame, int index);
 
 public:
 	~Player();
