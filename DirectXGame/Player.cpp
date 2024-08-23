@@ -45,13 +45,23 @@ void Player::Move() {
 	// Vector2 mouseRotate = {float(mouseMove.lY), float(mouseMove.lX)};
 	//_rotate.x += mouseRotate.x * _rotationSpeed * 0.01f;
 	//_rotate.y += mouseRotate.y * _rotationSpeed * 0.01f;
+	// 因为x在90 ~270度的时候，上下被翻转了，所以这时候左转就会让镜头右转，因此需要特别判断一下，更符合直观
+	float absRotateX = std::fabsf(_rotate.x);
+	if (absRotateX > acosf(-1) * 0.5f && absRotateX < acosf(-1) * 1.5f)
+		_rotate.y -= (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
+	else
+		_rotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
 	_rotate.x += (_arrowMouse.y - _arrowMove.y) * _rotationSpeed;
-	_rotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
 	// 随着左右偏移飞机也做出左右翻转的动画
 	// if ((_arrowMouse.x - _arrowMove.x) > 0)
 	//	_rotate.z = std::lerp(_rotate.z, -1.f, 0.01f);
 	// else
 	//	_rotate.z = std::lerp(_rotate.z, 1.f, 0.01f);
+
+	// 将角度限制在360度之中，方便计算
+	_rotate.x = std::fmodf(_rotate.x, acosf(-1) * 2);
+	_rotate.y = std::fmodf(_rotate.y, acosf(-1) * 2);
+	_rotate.z = std::fmodf(_rotate.z, acosf(-1) * 2);
 
 	// 正規化、速度は同じにするために
 	if (move.x != 0 || move.y != 0 || move.z != 0)
