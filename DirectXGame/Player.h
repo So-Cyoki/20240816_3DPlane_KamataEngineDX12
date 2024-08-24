@@ -33,7 +33,7 @@ private:
 	Vector3 _accelerations{};
 
 	// 战斗属性
-	int _attackTime = 10;
+	int _attackTime = 5;
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);

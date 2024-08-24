@@ -1,11 +1,7 @@
 #include "Bullet.h"
 
 void Bullet::Move() {
-	Vector3 front{};
-	front.x = sinf(_rotate.y) * cosf(_rotate.x);
-	front.y = -sinf(_rotate.x);
-	front.z = cosf(_rotate.y) * cosf(_rotate.x);
-	front.Normalize();
+	Vector3 front = My3dTools::GetDirection_front(_rotate);
 
 	_pos += front * _speed;
 

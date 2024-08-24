@@ -11,8 +11,8 @@ void CameraController::Update() {
 	_targetPos = targetWorldTransform.translation_ + targetFront * _targetOffset.z + targetUp * _targetOffset.y + targetRight * _targetOffset.x;
 	_targetRotate = targetWorldTransform.rotation_;
 
-	_cameraPos = _targetPos;
-	_cameraRotate = _targetRotate;
+	//_cameraPos = _targetPos;
+	//_cameraRotate = _targetRotate;
 	// 重新传入摄像机的view矩阵中
 	Matrix4x4 m = Matrix4x4::MakeAffineMatrix({1, 1, 1}, _cameraRotate, _cameraPos);
 	_viewProjection.matView = m.Inverse();

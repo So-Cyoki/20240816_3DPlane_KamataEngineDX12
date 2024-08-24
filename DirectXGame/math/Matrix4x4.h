@@ -60,8 +60,7 @@ public:
 	};
 	// Quaternion to Matrix4x4
 	static Matrix4x4 ToMatrix4x4(const Quaternion& q) {
-		Matrix4x4 matrix;
-
+		Matrix4x4 matrix = {0};
 		float xx = q.x * q.x;
 		float yy = q.y * q.y;
 		float zz = q.z * q.z;
@@ -86,6 +85,21 @@ public:
 		matrix.m[2][1] = 2.0f * (yz - wx);
 		matrix.m[2][2] = 1.0f - 2.0f * (xx + yy);
 		matrix.m[2][3] = 0.0f;
+
+		// matrix.m[0][0] = 1.0f - 2.0f * (yy + zz);
+		// matrix.m[0][1] = 2.0f * (xy - wz);
+		// matrix.m[0][2] = 2.0f * (xz + wy);
+		// matrix.m[0][3] = 0.0f;
+
+		// matrix.m[1][0] = 2.0f * (xy + wz);
+		// matrix.m[1][1] = 1.0f - 2.0f * (xx + zz);
+		// matrix.m[1][2] = 2.0f * (yz - wx);
+		// matrix.m[1][3] = 0.0f;
+
+		// matrix.m[2][0] = 2.0f * (xz - wy);
+		// matrix.m[2][1] = 2.0f * (yz + wx);
+		// matrix.m[2][2] = 1.0f - 2.0f * (xx + yy);
+		// matrix.m[2][3] = 0.0f;
 
 		matrix.m[3][0] = 0.0f;
 		matrix.m[3][1] = 0.0f;

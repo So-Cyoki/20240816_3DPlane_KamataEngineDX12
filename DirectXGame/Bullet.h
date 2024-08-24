@@ -19,7 +19,7 @@ private:
 	Sphere _sphere{};
 	float _radius = 0.1f;
 	Vector3 _scale = {0.2f, 0.2f, 0.2f};
-	float _moveMaxLength = ViewProjection::_kFarZ * 0.7f; // 最大范围
+	float _moveMaxLength = ViewProjection::_kFarZ * 0.5f; // 最大范围
 
 	float _speed = 10.f;
 	bool _isDead = false;

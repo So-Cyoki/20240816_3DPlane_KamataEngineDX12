@@ -25,21 +25,11 @@ public:
 	}
 
 	// Angles to Quaternion(x,y,z)
-	static Quaternion AngleToQuaternion(float roll, float pitch, float yaw) {
-		Quaternion q{};
-
-		float cy = cosf(yaw * 0.5f);
-		float sy = sinf(yaw * 0.5f);
-		float cp = cosf(pitch * 0.5f);
-		float sp = sinf(pitch * 0.5f);
-		float cr = cosf(roll * 0.5f);
-		float sr = sinf(roll * 0.5f);
-
-		q.w = cr * cp * cy + sr * sp * sy;
-		q.x = sr * cp * cy - cr * sp * sy;
-		q.y = cr * sp * cy + sr * cp * sy;
-		q.z = cr * cp * sy - sr * sp * cy;
-
-		return q;
+	static Quaternion AngleToQuaternion(float rx, float ry, float rz) {
+		Quaternion qx(cosf(rx / 2), sinf(rx / 2), 0, 0);
+		Quaternion qy(cosf(ry / 2), 0, sinf(ry / 2), 0);
+		Quaternion qz(cosf(rz / 2), 0, 0, sinf(rz / 2));
+		// return qz * qy * qx;
+		return qx * qy * qz;
 	};
 };

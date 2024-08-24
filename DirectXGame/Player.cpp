@@ -96,11 +96,18 @@ void Player::ArrowMove() {
 
 void Player::Attack() {
 	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch(_attackTime, 1)) {
+		Vector3 offset = {1, 1, 4}; // 调整子弹的出现位置
+
 		Vector3 up = My3dTools::GetDirection_up(_rotate);
 		Vector3 front = My3dTools::GetDirection_front(_rotate);
-		Vector3 bulletBornPos = _pos + up * 1 + front * -10;
-		Bullet* bullet = BulletManager::AcquireBullet(_viewProjection, bulletBornPos, _rotate, Bullet::tPlayer);
-		bullet->Fire();
+		Vector3 right = My3dTools::GetDirection_right(_rotate);
+		Vector3 bulletBornPos1 = _pos + up * offset.y + front * offset.z + right * offset.x;
+		Vector3 bulletBornPos2 = _pos + up * offset.y + front * offset.z + right * -offset.x;
+		Vector3 bulletBornRotate = {_rotate.x, _rotate.y, 0};
+		Bullet* bullet1 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos1, bulletBornRotate, Bullet::tPlayer);
+		bullet1->Fire();
+		Bullet* bullet2 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos2, bulletBornRotate, Bullet::tPlayer);
+		bullet2->Fire();
 	}
 }
 
@@ -124,7 +131,7 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 }
 
 void Player::Update() {
-	ArrowMove();
+	// ArrowMove();
 	Move();
 	Attack();
 
