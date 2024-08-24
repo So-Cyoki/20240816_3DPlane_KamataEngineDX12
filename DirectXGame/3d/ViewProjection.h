@@ -18,6 +18,9 @@ struct ConstBufferDataViewProjection {
 /// </summary>
 class ViewProjection {
 public:
+	// 静的メンバ変数
+	inline static const float _kFarZ = 11000.f; // 深度限界（奥側）
+
 #pragma region ビュー行列の設定
 	// X,Y,Z軸回りのローカル回転角
 	Vector3 rotation_ = {0, 0, 0};
@@ -33,8 +36,7 @@ public:
 	// 深度限界（手前側）
 	float nearZ = 0.1f;
 	// 深度限界（奥側）
-	// float farZ = 1000.0f;
-	float farZ = 4100.0f;
+	float farZ = _kFarZ;
 #pragma endregion
 
 	// ビュー行列

@@ -21,11 +21,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"GC2A_07_ソウ_チョウキ");
-	// win->SetFullscreen(true);
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
+	win->SetFullscreen(true);
 
 #pragma region 汎用機能初期化
 	// ImGuiの初期化
@@ -92,6 +92,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Draw();
 		// 描画終了
 		dxCommon->PostDraw();
+
+		// ESCキーが押されたらループを抜ける
+		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
+			break;
 	}
 
 	// 各種解放

@@ -1,4 +1,5 @@
 #pragma once
+#include "Quaternion.h"
 #include "Vector3.h"
 #include "algorithm"
 #include <cmath>
@@ -42,35 +43,47 @@ public:
 	}
 	// 方向计算
 	static Vector3 GetDirection_front(Vector3 rotate) {
-		Vector3 front{};
-		front.x = sinf(rotate.y) * cosf(rotate.x);
-		front.y = -sinf(rotate.x);
-		front.z = cosf(rotate.y) * cosf(rotate.x);
-		front.Normalize();
+		// Vector3 front{};
+		// front.x = sinf(rotate.y) * cosf(rotate.x);
+		// front.y = -sinf(rotate.x);
+		// front.z = cosf(rotate.y) * cosf(rotate.x);
+		// front.Normalize();
+		// return front;
+		Quaternion q = Quaternion::AngleToQuaternion(rotate.x, rotate.y, rotate.z);
+		Vector3 localFront = {0, 0, 1};
+		Vector3 front = q * localFront;
 		return front;
 	};
 	static Vector3 GetDirection_up(Vector3 rotate) {
-		Vector3 front{}, right{}, up{};
-		front.x = sinf(rotate.y) * cosf(rotate.x);
-		front.y = -sinf(rotate.x);
-		front.z = cosf(rotate.y) * cosf(rotate.x);
-		front.Normalize();
-		Vector3 worldUp{0, 1, 0};
-		right = Vector3::Cross(front, worldUp);
-		right.Normalize();
-		up = Vector3::Cross(right, front);
-		up.Normalize();
+		// Vector3 front{}, right{}, up{};
+		// front.x = sinf(rotate.y) * cosf(rotate.x);
+		// front.y = -sinf(rotate.x);
+		// front.z = cosf(rotate.y) * cosf(rotate.x);
+		// front.Normalize();
+		// Vector3 worldUp{0, 1, 0};
+		// right = Vector3::Cross(front, worldUp);
+		// right.Normalize();
+		// up = Vector3::Cross(right, front);
+		// up.Normalize();
+		// return up;
+		Quaternion q = Quaternion::AngleToQuaternion(rotate.x, rotate.y, rotate.z);
+		Vector3 localUp = {0, 1, 0};
+		Vector3 up = q * localUp;
 		return up;
 	};
 	static Vector3 GetDirection_right(Vector3 rotate) {
-		Vector3 front{}, right{};
-		front.x = sinf(rotate.y) * cosf(rotate.x);
-		front.y = -sinf(rotate.x);
-		front.z = cosf(rotate.y) * cosf(rotate.x);
-		front.Normalize();
-		Vector3 worldUp{0, 1, 0};
-		right = Vector3::Cross(front, worldUp);
-		right.Normalize();
+		// Vector3 front{}, right{};
+		// front.x = sinf(rotate.y) * cosf(rotate.x);
+		// front.y = -sinf(rotate.x);
+		// front.z = cosf(rotate.y) * cosf(rotate.x);
+		// front.Normalize();
+		// Vector3 worldUp{0, 1, 0};
+		// right = Vector3::Cross(front, worldUp);
+		// right.Normalize();
+		// return right;
+		Quaternion q = Quaternion::AngleToQuaternion(rotate.x, rotate.y, rotate.z);
+		Vector3 localRight = {-1, 0, 0};
+		Vector3 right = q * localRight;
 		return right;
 	};
 	// ツール

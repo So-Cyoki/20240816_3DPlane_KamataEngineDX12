@@ -19,12 +19,13 @@ private:
 	float _radius = 5.f;
 	Vector3 _pos{};
 	Vector3 _rotate{};
-	float _moveMaxLength = 900; // 最大移动距离
+	float _moveMaxLength = ViewProjection::_kFarZ * 0.35f; // 最大移动距离
 
 	// 物理移动
-	float _moveSpeed = 0.002f; // 每次增加的速度
-	float _rotationSpeed = 0.3f * 0.0001f;
-	float _moveBrakeSpeed = 0.05f; // 相对静止速度，刹车（0~1）
+	float _moveSpeed = 0.2f * 0.001f;      // 每次增加的速度
+	float _rotationSpeed = 0.3f * 0.0001f; // 拐弯转向速度
+	float _adRotationSpeed = 0.1f * 0.1f;  // 控制左右翻转
+	float _moveBrakeSpeed = 0.05f;         // 相对静止速度，刹车（0~1）
 	float _moveMax = 1.5f;
 	float _moveGasPedal = 0; // 用这个来控制油门的速度
 	float _moveGasMax = 0.1f;

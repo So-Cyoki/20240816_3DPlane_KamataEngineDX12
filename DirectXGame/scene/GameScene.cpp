@@ -72,6 +72,7 @@ void GameScene::Update() {
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
 	ImGui::Text("Bullet = %d", int(BulletManager::_updatePool_player.size()));
+	ImGui::DragFloat3("Camera Offset", (float*)&_cameraConObj->_targetOffset, 0.01f);
 	ImGui::End();
 #endif
 }

@@ -11,7 +11,7 @@ private:
 	ViewProjection* _viewProjection = nullptr;
 	Model* _model = nullptr;
 
-	Vector3 _scale = {3000, 3000, 3000};
+	float _size = ViewProjection::_kFarZ * 0.49f;
 
 public:
 	~Skydome();

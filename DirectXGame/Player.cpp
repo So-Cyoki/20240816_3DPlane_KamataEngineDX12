@@ -24,19 +24,18 @@ void Player::Move() {
 		_moveGasPedal -= _moveSpeed;
 	}
 	if (Input::GetInstance()->PushKey(DIK_A)) {
-		move = move + right;
-		_moveGasPedal *= 0.5f;
+		_rotate.z += _adRotationSpeed;
 	} else if (Input::GetInstance()->PushKey(DIK_D)) {
-		move = move + (right * -1);
-		_moveGasPedal *= 0.5f;
+		_rotate.z -= _adRotationSpeed;
 	}
 	_moveGasPedal = std::clamp(_moveGasPedal, -_moveGasMax / 2, _moveGasMax); // 油门速度限制
 	move += (front * (_moveGasPedal >= 0 ? 1 : -1));                          // 因为发动机，所以一直都有一个向正前方飞行的力
-	// 相对静止控制机制（刹车）
+	// 相对静止控制机制（刹车，和Z轴回正）
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL)) {
 		_velocity.x = std::lerp(_velocity.x, 0.f, _moveBrakeSpeed);
 		_velocity.y = std::lerp(_velocity.y, 0.f, _moveBrakeSpeed);
 		_velocity.z = std::lerp(_velocity.z, 0.f, _moveBrakeSpeed);
+		_rotate.z = std::lerp(_rotate.z, 0.f, _adRotationSpeed);
 		_moveGasPedal = std::lerp(_moveGasPedal, 0.f, _moveBrakeSpeed);
 	}
 
@@ -99,7 +98,7 @@ void Player::Attack() {
 	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch(_attackTime, 1)) {
 		Vector3 up = My3dTools::GetDirection_up(_rotate);
 		Vector3 front = My3dTools::GetDirection_front(_rotate);
-		Vector3 bulletBornPos = _pos + up * 5 + front * -20;
+		Vector3 bulletBornPos = _pos + up * 1 + front * -10;
 		Bullet* bullet = BulletManager::AcquireBullet(_viewProjection, bulletBornPos, _rotate, Bullet::tPlayer);
 		bullet->Fire();
 	}
