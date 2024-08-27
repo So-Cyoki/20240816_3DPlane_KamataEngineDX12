@@ -26,7 +26,7 @@ private:
 
 	// 物理移动
 	float _moveSpeed = 0.6f * 0.001f;      // 每次增加的速度
-	float _rotationSpeed = 0.3f * 0.0001f; // 拐弯转向速度
+	float _rotationSpeed = 0.7f * 0.0001f; // 拐弯转向速度
 	float _adRotationSpeed = 0.1f * 0.1f;  // 控制左右翻转
 	float _moveBrakeSpeed = 0.05f;         // 相对静止速度，刹车（0~1）
 	float _moveMax = 1.5f;
@@ -40,8 +40,10 @@ private:
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
-	Vector2 _arrowMove = {_screenWidth / 2, _screenHeight / 2};  // 代表移动的方向
-	Vector2 _arrowMouse = {_screenWidth / 2, _screenHeight / 2}; // 代表鼠标移动的方向
+	Vector2 _screenPoint = {_screenWidth / 2, _screenHeight / 2};
+	Vector2 _arrowMove = _screenPoint;  // 代表移动的方向
+	Vector2 _arrowMouse = _screenPoint; // 代表鼠标移动的方向
+	float _arrowMouseMax = 428.f / 2;   // 最大移动距离
 
 	void Move();
 	void ArrowMove();

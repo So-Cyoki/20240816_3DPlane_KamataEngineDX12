@@ -57,23 +57,32 @@ void Player::Move() {
 	_velocity.y = std ::clamp(_velocity.y, -_moveMax, _moveMax);
 	_velocity.z = std ::clamp(_velocity.z, -_moveMax, _moveMax);
 
-	// 最大范围限制，避免飞出天空球
 	Vector3 preWorldPos = GetWorldPosition();
 	if (_moveMaxLength > preWorldPos.Length()) {
-		_pos += _velocity; // 位置移动
+		// 位置移动
+		_pos += _velocity;
 	} else {
-		_pos *= 0.999f;
+		// 最大范围限制
+		float scale = _moveMaxLength / preWorldPos.Length();
+		_pos *= scale;
 	}
 }
 
 void Player::ArrowMove() {
 	// 不断的返回屏幕中心点
-	_arrowMouse.x = std::lerp(_arrowMouse.x, _screenWidth / 2, _rotationSpeed * 1000);
-	_arrowMouse.y = std::lerp(_arrowMouse.y, _screenHeight / 2, _rotationSpeed * 1000);
+	//_arrowMouse.x = std::lerp(_arrowMouse.x, _screenWidth / 2, _rotationSpeed * 1000);
+	//_arrowMouse.y = std::lerp(_arrowMouse.y, _screenHeight / 2, _rotationSpeed * 1000);
+
 	// 根据鼠标移动
 	Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
 	Vector2 mouseMovePos = {float(mouseMove.lX), float(mouseMove.lY)};
 	_arrowMouse += mouseMovePos;
+	// 限制在UI的范围内
+	float length = (_arrowMouse - _screenPoint).Length();
+	if (length > _arrowMouseMax) {
+		float scale = _arrowMouseMax / length;
+		_arrowMouse = _screenPoint + ((_arrowMouse - _screenPoint) * scale);
+	}
 }
 
 void Player::Attack() {
