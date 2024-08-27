@@ -1,7 +1,7 @@
 #include "Bullet.h"
 
 void Bullet::Move() {
-	Vector3 front = My3dTools::GetDirection_front(_rotate);
+	Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
 
 	_pos += front * _speed;
 
@@ -16,15 +16,16 @@ void Bullet::ToDead() { BulletManager::ReleaseBullet(this); }
 
 Bullet::~Bullet() { delete _model; }
 
-void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate, Type type) {
+void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Type type) {
 	_model = Model::CreateFromOBJ("Bullet", true);
 	_viewProjection = viewProjection;
 	_worldTransform.Initialize();
 	_worldTransform.translation_ = position;
-	_worldTransform.rotation_ = rotate;
 	_pos = position;
-	_rotate = rotate;
+	_rotate = {0, 0, 0};
 	_worldTransform.scale_ = _scale;
+	_currentQuaternion = rotate;
+	_beforeRotate = {0, 0, 0};
 
 	_type = type;
 	_isDead = false;
@@ -37,7 +38,12 @@ void Bullet::Update() {
 
 	_worldTransform.translation_ = _pos;
 	_worldTransform.rotation_ = _rotate;
-	_worldTransform.UpdateMatrix(); // 行列計算
+	Vector3 frameRotate = _rotate - _beforeRotate;
+	Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
+	_currentQuaternion = _currentQuaternion * frameQ;
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+	_beforeRotate = _rotate;
 
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
@@ -54,7 +60,7 @@ const Vector3 Bullet::GetWorldPosition() const {
 	return worldPos;
 }
 
-Bullet* BulletManager::AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate, Bullet::Type type) {
+Bullet* BulletManager::AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Bullet::Type type) {
 	if (_idlePool.empty()) {
 		Bullet* bullet = new Bullet();
 		bullet->Initalize(viewProjection, position, rotate, type);

@@ -2,8 +2,7 @@
 #include "Vector3.h"
 #include <cmath>
 
-class Quaternion final {
-public:
+struct Quaternion final {
 	float w, x, y, z;
 
 public:
@@ -23,13 +22,20 @@ public:
 		float mag = std::sqrt(w * w + x * x + y * y + z * z);
 		return Quaternion(w / mag, x / mag, y / mag, z / mag);
 	}
+	// 将本地旋转变为世界旋转
+	Vector3 RotateVector(const Vector3& v) const {
+		Quaternion qv(0, v.x, v.y, v.z);
+		Quaternion q_conjugate = {w, -x, -y, -z};
+		Quaternion result = (*this) * qv * q_conjugate;
+		return Vector3(result.x, result.y, result.z);
+	}
 
-	// Angles to Quaternion(x,y,z)
-	static Quaternion AngleToQuaternion(float rx, float ry, float rz) {
+	// Radian to Quaternion(x,y,z)
+	static Quaternion RadianToQuaternion(Vector3 rotate) {
+		float rx = rotate.x, ry = rotate.y, rz = rotate.z;
 		Quaternion qx(cosf(rx / 2), sinf(rx / 2), 0, 0);
 		Quaternion qy(cosf(ry / 2), 0, sinf(ry / 2), 0);
 		Quaternion qz(cosf(rz / 2), 0, 0, sinf(rz / 2));
-		// return qz * qy * qx;
 		return qx * qy * qz;
 	};
 };

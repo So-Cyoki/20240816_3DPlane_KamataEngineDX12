@@ -47,7 +47,25 @@ public:
 		// mRotationY.m[2][2] = cosf(rotation.y);
 		// mRotationY.m[1][1] = mRotationY.m[3][3] = 1;
 		// Matrix4x4 mRotation = Multiply(mRotationX, Multiply(mRotationY, mRotationZ));
-		Quaternion quatRotation = Quaternion::AngleToQuaternion(rotation.x, rotation.y, rotation.z);
+		Quaternion quatRotation = Quaternion::RadianToQuaternion(rotation);
+		Matrix4x4 mRotation = Matrix4x4::ToMatrix4x4(quatRotation);
+		//  Translation
+		Matrix4x4 mTranslation = {0};
+		mTranslation.m[0][0] = mTranslation.m[1][1] = mTranslation.m[2][2] = mTranslation.m[3][3] = 1;
+		mTranslation.m[3][0] = translation.x;
+		mTranslation.m[3][1] = translation.y;
+		mTranslation.m[3][2] = translation.z;
+
+		return Multiply(mScale, Multiply(mRotation, mTranslation));
+	};
+	static Matrix4x4 MakeAffineMatrix(Vector3 scale, Quaternion quatRotation, Vector3 translation) {
+		// Scale
+		Matrix4x4 mScale = {0};
+		mScale.m[0][0] = scale.x;
+		mScale.m[1][1] = scale.y;
+		mScale.m[2][2] = scale.z;
+		mScale.m[3][3] = 1;
+		// Rotation
 		Matrix4x4 mRotation = Matrix4x4::ToMatrix4x4(quatRotation);
 		//  Translation
 		Matrix4x4 mTranslation = {0};
@@ -108,6 +126,7 @@ public:
 
 		return matrix;
 	}
+
 	// 逆行列
 	Matrix4x4 Inverse() const {
 		Matrix4x4 result{};

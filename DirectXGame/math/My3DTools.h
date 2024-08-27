@@ -49,10 +49,10 @@ public:
 		// front.z = cosf(rotate.y) * cosf(rotate.x);
 		// front.Normalize();
 		// return front;
-		Quaternion q = Quaternion::AngleToQuaternion(rotate.x, rotate.y, rotate.z);
+		Quaternion q = Quaternion::RadianToQuaternion(rotate);
 		Vector3 localFront = {0, 0, 1};
 		Vector3 front = q * localFront;
-		return front;
+		return front.Normalize();
 	};
 	static Vector3 GetDirection_up(Vector3 rotate) {
 		// Vector3 front{}, right{}, up{};
@@ -66,10 +66,10 @@ public:
 		// up = Vector3::Cross(right, front);
 		// up.Normalize();
 		// return up;
-		Quaternion q = Quaternion::AngleToQuaternion(rotate.x, rotate.y, rotate.z);
+		Quaternion q = Quaternion::RadianToQuaternion(rotate);
 		Vector3 localUp = {0, 1, 0};
 		Vector3 up = q * localUp;
-		return up;
+		return up.Normalize();
 	};
 	static Vector3 GetDirection_right(Vector3 rotate) {
 		// Vector3 front{}, right{};
@@ -81,10 +81,40 @@ public:
 		// right = Vector3::Cross(front, worldUp);
 		// right.Normalize();
 		// return right;
-		Quaternion q = Quaternion::AngleToQuaternion(rotate.x, rotate.y, rotate.z);
+		Quaternion q = Quaternion::RadianToQuaternion(rotate);
 		Vector3 localRight = {-1, 0, 0};
 		Vector3 right = q * localRight;
-		return right;
+		return right.Normalize();
+	};
+	static Vector3 GetDirection_front(Quaternion quaternion) {
+		// quaternion = quaternion.normalize();
+		// Vector3 localFront = {0, 0, 1};
+		// Vector3 front = quaternion * localFront;
+		// return front.Normalize();
+		quaternion = quaternion.normalize();
+		Vector3 localFront = {0, 0, 1};
+		Vector3 front = quaternion.RotateVector(localFront);
+		return front.Normalize();
+	};
+	static Vector3 GetDirection_up(Quaternion quaternion) {
+		// quaternion = quaternion.normalize();
+		// Vector3 localUp = {0, 1, 0};
+		// Vector3 up = quaternion * localUp;
+		// return up;
+		quaternion = quaternion.normalize();
+		Vector3 localUp = {0, 1, 0};
+		Vector3 up = quaternion.RotateVector(localUp);
+		return up.Normalize();
+	};
+	static Vector3 GetDirection_right(Quaternion quaternion) {
+		// quaternion = quaternion.normalize();
+		// Vector3 localRight = {-1, 0, 0};
+		// Vector3 right = quaternion * localRight;
+		// return right;
+		quaternion = quaternion.normalize();
+		Vector3 localRight = {-1, 0, 0};
+		Vector3 right = quaternion.RotateVector(localRight);
+		return right.Normalize();
 	};
 	// ツール
 	static AABB GetAABB(float width, float height, float depth, Vector3 worldPos) {

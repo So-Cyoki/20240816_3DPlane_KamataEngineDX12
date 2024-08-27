@@ -1,6 +1,7 @@
 #pragma once
 #include "Model.h"
 #include "My3DTools.h"
+#include "Quaternion.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <queue>
@@ -13,9 +14,11 @@ private:
 	WorldTransform _worldTransform;
 	ViewProjection* _viewProjection = nullptr;
 	Model* _model = nullptr;
+	Quaternion _currentQuaternion = {1, 0, 0, 0}; // 用来计算出四元数，保证旋转是完全没问题的
+	Vector3 _beforeRotate = {0, 0, 0};
 
 	Vector3 _pos{};
-	Vector3 _rotate{};
+	Vector3 _rotate{}; // 虽然还保留在这里，但是实际上已经不使用了，因为去用四元数了
 	Sphere _sphere{};
 	float _radius = 0.1f;
 	Vector3 _scale = {0.2f, 0.2f, 0.2f};
@@ -32,7 +35,7 @@ public:
 	Type _type;
 
 	~Bullet();
-	void Initalize(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate, Type type);
+	void Initalize(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Type type);
 	void Update();
 	void Draw();
 	void Fire(); // 调用这个方法来发射出子弹
@@ -53,7 +56,7 @@ public:
 	static void Draw();
 
 	// 获取一个对象，并且初始化
-	static Bullet* AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Vector3& rotate, Bullet::Type type);
+	static Bullet* AcquireBullet(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Bullet::Type type);
 	// 回收一个对象
 	static void ReleaseBullet(Bullet* bullet);
 };

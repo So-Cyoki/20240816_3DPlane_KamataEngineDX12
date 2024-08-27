@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "My3DTools.h"
+#include "Quaternion.h"
 #include "ViewProjection.h"
 #include "WinApp.h"
 #include "WorldTransform.h"
@@ -14,6 +15,8 @@ private:
 	WorldTransform _worldTransform;
 	ViewProjection* _viewProjection = nullptr;
 	Model* _model = nullptr;
+	Quaternion _currentQuaternion = {1, 0, 0, 0}; // 用来计算出四元数，保证旋转是完全没问题的
+	Vector3 _beforeRotate = {0, 0, 0};
 
 	Sphere _sphere{};
 	float _radius = 5.f;
@@ -22,7 +25,7 @@ private:
 	float _moveMaxLength = ViewProjection::_kFarZ * 0.35f; // 最大移动距离
 
 	// 物理移动
-	float _moveSpeed = 0.2f * 0.001f;      // 每次增加的速度
+	float _moveSpeed = 0.6f * 0.001f;      // 每次增加的速度
 	float _rotationSpeed = 0.3f * 0.0001f; // 拐弯转向速度
 	float _adRotationSpeed = 0.1f * 0.1f;  // 控制左右翻转
 	float _moveBrakeSpeed = 0.05f;         // 相对静止速度，刹车（0~1）
@@ -64,4 +67,5 @@ public:
 	const float& GetRotationSpeed() const { return _rotationSpeed; };
 	const Vector2& GetArrowMove() const { return _arrowMove; };
 	const Vector2& GetArrowMouse() const { return _arrowMouse; };
+	const Quaternion& GetQuaternion() const { return _currentQuaternion; };
 };

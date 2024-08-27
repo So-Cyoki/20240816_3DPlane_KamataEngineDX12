@@ -2,18 +2,9 @@
 
 void Player::Move() {
 	Vector3 front{}, right{}, up{}, move{}; // カメラの前・横・上の向きと総合の移動ベクトル
-	// カメラの前方向を計算
-	front.x = sinf(_rotate.y) * cosf(_rotate.x);
-	front.y = -sinf(_rotate.x);
-	front.z = cosf(_rotate.y) * cosf(_rotate.x);
-	front.Normalize();
-	// カメラの横方向を計算
-	Vector3 worldUp{0, 1, 0};
-	right = Vector3::Cross(front, worldUp);
-	right.Normalize();
-	// カメラの上方向を計算
-	up = Vector3::Cross(right, front);
-	up.Normalize();
+	front = My3dTools::GetDirection_front(_currentQuaternion);
+	right = My3dTools::GetDirection_right(_currentQuaternion);
+	up = My3dTools::GetDirection_up(_currentQuaternion);
 
 	// キーボードで移動
 	if (Input::GetInstance()->PushKey(DIK_W)) {
@@ -40,22 +31,13 @@ void Player::Move() {
 	}
 
 	// 鼠标控制镜头旋转
-	// Input::MouseMove mouseMove = Input::GetInstance()->GetMouseMove();
-	// Vector2 mouseRotate = {float(mouseMove.lY), float(mouseMove.lX)};
-	//_rotate.x += mouseRotate.x * _rotationSpeed * 0.01f;
-	//_rotate.y += mouseRotate.y * _rotationSpeed * 0.01f;
-	// 因为x在90 ~270度的时候，上下被翻转了，所以这时候左转就会让镜头右转，因此需要特别判断一下，更符合直观
+	// 因为x在90 ~270度的时候，上下被翻转了，所以这时候左转就会让镜头右转，因此需要特别判断一下，更符合直观(使用了四元数后不会出现这个问题了，但是先留着)
 	float absRotateX = std::fabsf(_rotate.x);
 	if (absRotateX > acosf(-1) * 0.5f && absRotateX < acosf(-1) * 1.5f)
-		_rotate.y -= (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
+		_rotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
 	else
 		_rotate.y += (_arrowMouse.x - _arrowMove.x) * _rotationSpeed;
 	_rotate.x += (_arrowMouse.y - _arrowMove.y) * _rotationSpeed;
-	// 随着左右偏移飞机也做出左右翻转的动画
-	// if ((_arrowMouse.x - _arrowMove.x) > 0)
-	//	_rotate.z = std::lerp(_rotate.z, -1.f, 0.01f);
-	// else
-	//	_rotate.z = std::lerp(_rotate.z, 1.f, 0.01f);
 
 	// 将角度限制在360度之中，方便计算
 	_rotate.x = std::fmodf(_rotate.x, acosf(-1) * 2);
@@ -98,15 +80,15 @@ void Player::Attack() {
 	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch(_attackTime, 1)) {
 		Vector3 offset = {1, 1, 4}; // 调整子弹的出现位置
 
-		Vector3 up = My3dTools::GetDirection_up(_rotate);
-		Vector3 front = My3dTools::GetDirection_front(_rotate);
-		Vector3 right = My3dTools::GetDirection_right(_rotate);
+		Vector3 up = My3dTools::GetDirection_up(_currentQuaternion);
+		Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
+		Vector3 right = My3dTools::GetDirection_right(_currentQuaternion);
 		Vector3 bulletBornPos1 = _pos + up * offset.y + front * offset.z + right * offset.x;
 		Vector3 bulletBornPos2 = _pos + up * offset.y + front * offset.z + right * -offset.x;
 		Vector3 bulletBornRotate = {_rotate.x, _rotate.y, 0};
-		Bullet* bullet1 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos1, bulletBornRotate, Bullet::tPlayer);
+		Bullet* bullet1 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos1, _currentQuaternion, Bullet::tPlayer);
 		bullet1->Fire();
-		Bullet* bullet2 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos2, bulletBornRotate, Bullet::tPlayer);
+		Bullet* bullet2 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos2, _currentQuaternion, Bullet::tPlayer);
 		bullet2->Fire();
 	}
 }
@@ -128,16 +110,23 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 	_worldTransform.Initialize();
 	_worldTransform.translation_ = position;
 	_pos = position;
+	_currentQuaternion = {1, 0, 0, 0};
+	_beforeRotate = {0, 0, 0};
 }
 
 void Player::Update() {
-	// ArrowMove();
+	ArrowMove();
 	Move();
 	Attack();
-
+	// 旋转必须使用四元数，而且是每帧计算的四元数，这才可以保证旋转绝对是没问题的
 	_worldTransform.translation_ = _pos;
 	_worldTransform.rotation_ = _rotate;
-	_worldTransform.UpdateMatrix(); // 行列計算
+	Vector3 frameRotate = _rotate - _beforeRotate;
+	Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
+	_currentQuaternion = _currentQuaternion * frameQ;
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+	_beforeRotate = _rotate;
 
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }

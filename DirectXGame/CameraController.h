@@ -5,19 +5,23 @@
 class CameraController {
 public:
 	ViewProjection _viewProjection; // 自身の位置(カメラだから、ViewProjectionにしないと)
-	Vector3 _cameraPos = {0, 20, -100};
-	Vector3 _cameraRotate = {0.4f, 0, 0};
-	Vector3 _targetPos{};                // 目標の位置
-	Vector3 _targetRotate{};             // 目標の回転
-	Vector3 _targetOffset = {0, 4, -17}; // カメラとターゲットの距離の差
+	Quaternion _currentQuaternion = {1, 0, 0, 0};
+	Vector3 _beforeRotate = {0, 0, 0};
+
+	Vector3 _pos = {0, 20, -100};
+	Vector3 _rotate = {0.4f, 0, 0};
+
+	Vector3 _targetPos{};                   // 目標の位置
+	Vector3 _targetRotate{};                // 目標の回転
+	Vector3 _targetOffset = {0, 2.5f, -17}; // カメラとターゲットの距離の差
 	Player* _target = nullptr;
 
 public:
-	void Initialize() { _viewProjection.Initialize(); };
+	void Initialize();
 	void Update();
 	void SetTarget(Player* target) { _target = target; };
 
-	const ViewProjection& GetViewProjection() { return _viewProjection; };
-	const Vector3& GetCameraPos() { return _cameraPos; };
-	const Vector3& GetCameraRotate() { return _cameraRotate; };
+	const ViewProjection& GetViewProjection() const { return _viewProjection; };
+	const Vector3& GetCameraPos() const { return _pos; };
+	const Vector3& GetCameraRotate() const { return _rotate; };
 };
