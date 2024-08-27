@@ -124,9 +124,11 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 }
 
 void Player::Update() {
-	ArrowMove();
+	if (Input::GetInstance()->PushKey(DIK_LSHIFT))
+		ArrowMove();
 	Move();
 	Attack();
+
 	// 旋转必须使用四元数，而且是每帧计算的四元数，这才可以保证旋转绝对是没问题的
 	_worldTransform.translation_ = _pos;
 	_worldTransform.rotation_ = _rotate;

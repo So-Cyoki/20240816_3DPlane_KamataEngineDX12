@@ -21,8 +21,8 @@ void CameraController::Update() {
 		Vector3 targetUp = My3dTools::GetDirection_up(_currentQuaternion);
 		Vector3 targetRight = My3dTools::GetDirection_right(_currentQuaternion);
 		// 跟随的目标的位置，并且加上自定义的位置偏移
-		_targetPos = targetWorldTransform.translation_ + targetFront * _targetOffset.z + targetUp * _targetOffset.y + targetRight * _targetOffset.x;
-		_targetRotate = targetWorldTransform.rotation_;
+		_targetPos = targetWorldTransform.translation_ + targetFront * _posOffset.z + targetUp * _posOffset.y + targetRight * _posOffset.x;
+		_targetRotate = targetWorldTransform.rotation_ + _rotateOffset;
 
 		_pos = _targetPos;
 		_rotate = _targetRotate;
