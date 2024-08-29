@@ -5,6 +5,8 @@
 
 struct Quaternion final {
 	float w, x, y, z;
+	Quaternion() : w(1.f), x(0.f), y(0.f), z(0.f){};
+	Quaternion(float w_, float x_, float y_, float z_) : w(w_), x(x_), y(y_), z(z_){};
 
 public:
 	// 数式
@@ -25,7 +27,7 @@ public:
 	}
 	// 将本地旋转变为世界旋转
 	Vector3 RotateVector(const Vector3& v) const {
-		Quaternion qv(0, v.x, v.y, v.z);
+		Quaternion qv = {0, v.x, v.y, v.z};
 		Quaternion q_conjugate = {w, -x, -y, -z};
 		Quaternion result = (*this) * qv * q_conjugate;
 		return Vector3(result.x, result.y, result.z);
@@ -105,10 +107,12 @@ public:
 			Quaternion result = {q1.w + t * (q2.w - q1.w), q1.x + t * (q2.x - q1.x), q1.y + t * (q2.y - q1.y), q1.z + t * (q2.z - q1.z)};
 			return result.normalize();
 		}
+		// 对t进行修正，使得各轴旋转速度更均匀
+		float adjustedT = std::powf(t, 1.0f / 3.0f); // 通过立方根调整
 
 		// 使用 Slerp 计算
-		float theta_0 = std::acosf(dotProduct); // θ
-		float theta = theta_0 * t;              // θ
+		float theta_0 = std::acos(dotProduct); // θ₀
+		float theta = theta_0 * adjustedT;     // 调整后的 θ
 
 		float sin_theta = std::sinf(theta);
 		float sin_theta_0 = std::sinf(theta_0);

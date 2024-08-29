@@ -5,14 +5,21 @@ void Bullet::Move() {
 
 	_pos += front * _speed;
 
-	// 最大范围限制
-	Vector3 preWorldPos = GetWorldPosition();
-	if (_moveMaxLength < preWorldPos.Length()) {
+	// 存活时间限制
+	if (FrameTimeWatch(_liftTime, 0))
 		BulletManager::ReleaseBullet(this);
-	}
 }
 
 void Bullet::ToDead() { BulletManager::ReleaseBullet(this); }
+
+bool Bullet::FrameTimeWatch(int frame, int index) {
+	if (_currentTimes[index] <= 0) {
+		_currentTimes[index] = frame;
+		return true;
+	}
+	_currentTimes[index]--;
+	return false;
+}
 
 Bullet::~Bullet() { delete _model; }
 
@@ -48,7 +55,10 @@ void Bullet::Update() {
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
-void Bullet::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
+void Bullet::Draw() {
+	if (_model != nullptr)
+		_model->Draw(_worldTransform, *_viewProjection);
+}
 
 void Bullet::Fire() { BulletManager::_updatePool_player.push_back(this); }
 

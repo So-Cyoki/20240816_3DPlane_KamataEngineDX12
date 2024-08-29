@@ -87,7 +87,7 @@ void Player::ArrowMove() {
 
 void Player::Attack() {
 	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch(_attackTime, 1)) {
-		Vector3 offset = {1, 1, 4}; // 调整子弹的出现位置
+		Vector3 offset = {1, 1, 2}; // 调整子弹的出现位置
 
 		Vector3 up = My3dTools::GetDirection_up(_currentQuaternion);
 		Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);

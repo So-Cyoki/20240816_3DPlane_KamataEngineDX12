@@ -22,13 +22,17 @@ private:
 	Sphere _sphere{};
 	float _radius = 0.1f;
 	Vector3 _scale = {0.2f, 0.2f, 0.2f};
-	float _moveMaxLength = ViewProjection::_kFarZ * 0.5f; // 最大范围
+	int _liftTime = 3 * 60; // 最大存活时间
 
 	float _speed = 10.f;
 	bool _isDead = false;
 
 	void Move();
 	void ToDead();
+
+	// 工具
+	int _currentTimes[31] = {0}; // 这个用于计时器的使用
+	bool FrameTimeWatch(int frame, int index);
 
 public:
 	inline static enum Type { tPlayer, tEnemy } bulletType;

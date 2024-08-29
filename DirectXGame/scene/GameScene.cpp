@@ -11,6 +11,15 @@ GameScene::~GameScene() {
 	delete _enemyObj;
 	delete _skydomeObj;
 	delete _gameUIObj;
+	for (Bullet* it : BulletManager::_updatePool_player)
+		delete it;
+	BulletManager::_updatePool_player.clear();
+	for (Bullet* it : BulletManager::_updatePool_enemy)
+		delete it;
+	BulletManager::_updatePool_enemy.clear();
+	for (Enemy* it : EnemyManager::_updatePool)
+		delete it;
+	EnemyManager::_updatePool.clear();
 }
 
 void GameScene::Initialize() {
@@ -31,11 +40,21 @@ void GameScene::Initialize() {
 	Vector3 playerPos = {0, 0, -120};
 	_playerObj->Initalize(&_viewProjection, playerPos);
 	_cameraConObj->SetTarget(_playerObj);
+	_earthBall = new EarthBall;
+	_earthBall->Initialize(&_viewProjection, _playerObj);
+
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, -100};
 	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj);
-	_earthBall = new EarthBall;
-	_earthBall->Initialize(&_viewProjection, _playerObj);
+	for (int i = 0; i < 4; i++) {
+		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {20.f * i, 20, -20}, _playerObj);
+		enemy->Fire();
+	}
+	for (int i = 0; i < 4; i++) {
+		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {-20.f * i, 20, -20}, _playerObj);
+		enemy->Fire();
+	}
+
 	// UI
 	_gameUIObj = new GameUI();
 	_gameUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight, _playerObj);
@@ -53,6 +72,7 @@ void GameScene::Update() {
 	_playerObj->Update();
 	_enemyObj->Update();
 	_earthBall->Update();
+	EnemyManager::Updata();
 	// UI
 	_gameUIObj->Update();
 
@@ -114,6 +134,7 @@ void GameScene::Draw() {
 	_earthBall->Draw();
 	_playerObj->Draw();
 	_enemyObj->Draw();
+	EnemyManager::Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
