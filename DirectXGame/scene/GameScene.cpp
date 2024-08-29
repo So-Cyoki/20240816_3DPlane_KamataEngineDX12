@@ -28,12 +28,12 @@ void GameScene::Initialize() {
 	_skydomeObj = new Skydome();
 	_skydomeObj->Initialize(&_viewProjection);
 	_playerObj = new Player();
-	Vector3 playerPos = {0, 0, -70};
+	Vector3 playerPos = {0, 0, -120};
 	_playerObj->Initalize(&_viewProjection, playerPos);
 	_cameraConObj->SetTarget(_playerObj);
 	_enemyObj = new Enemy();
-	Vector3 enemyPos = {0, 0, 0};
-	_enemyObj->Initalize(&_viewProjection, enemyPos);
+	Vector3 enemyPos = {0, 0, -100};
+	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj);
 	_earthBall = new EarthBall;
 	_earthBall->Initialize(&_viewProjection, _playerObj);
 	// UI
@@ -63,7 +63,11 @@ void GameScene::Update() {
 	ImGui::Begin("DeBug Window");
 	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
 	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
+	ImGui::DragFloat3("Player Translate", (float*)&_playerObj->GetPos(), 0.01f);
 	ImGui::DragFloat3("Player Rotate", (float*)&_playerObj->GetRotate(), 0.01f);
+	ImGui::DragFloat3("Enemy Translate", (float*)&_enemyObj->GetPos(), 0.01f);
+	// ImGui::DragFloat3("Enemy Rotate", (float*)&_enemyObj->GetRotate(), 0.01f);
+	ImGui::DragFloat4("Enemy Quaternion", (float*)&_enemyObj->_currentQuaternion, 0.01f);
 	ImGui::Spacing();
 	ImGui::Separator();
 	ImGui::Spacing();

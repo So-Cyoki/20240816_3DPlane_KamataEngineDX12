@@ -5,7 +5,7 @@ void CameraController::Initialize() {
 	_currentQuaternion = {1, 0, 0, 0};
 	_beforeRotate = {0, 0, 0};
 
-	_pos = {0, 20, -100};
+	_pos = {0, 20, -170};
 	_rotate = {0.4f, 0, 0};
 }
 
@@ -35,6 +35,7 @@ void CameraController::Update() {
 	Vector3 frameRotate = _rotate - _beforeRotate;
 	Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
 	_currentQuaternion = _currentQuaternion * frameQ;
+	_currentQuaternion.normalize();
 	Matrix4x4 m = Matrix4x4::MakeAffineMatrix({1, 1, 1}, _currentQuaternion, _pos);
 	// Matrix4x4 m = Matrix4x4::MakeAffineMatrix({1, 1, 1}, _rotate, _pos);
 	_viewProjection.matView = m.Inverse();

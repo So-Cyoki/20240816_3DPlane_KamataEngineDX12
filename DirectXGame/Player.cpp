@@ -124,7 +124,7 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 }
 
 void Player::Update() {
-	if (Input::GetInstance()->PushKey(DIK_LSHIFT))
+	if (!Input::GetInstance()->PushKey(DIK_LSHIFT))
 		ArrowMove();
 	Move();
 	Attack();
@@ -135,6 +135,7 @@ void Player::Update() {
 	Vector3 frameRotate = _rotate - _beforeRotate;
 	Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
 	_currentQuaternion = _currentQuaternion * frameQ;
+	_currentQuaternion.normalize();
 	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
 	_worldTransform.TransferMatrix();
 	_beforeRotate = _rotate;

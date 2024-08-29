@@ -11,7 +11,7 @@ public:
 	Quaternion _currentQuaternion = {1, 0, 0, 0};
 	Vector3 _beforeRotate = {0, 0, 0};
 
-	Vector3 _pos = {0, 20, -100};
+	Vector3 _pos = {0, 20, -170};
 	Vector3 _rotate = {0.4f, 0, 0};
 
 	Vector3 _targetPos{};                 // 目標の位置
