@@ -7,7 +7,7 @@ void Bullet::Move() {
 
 	// 存活时间限制
 	if (FrameTimeWatch(_liftTime, 0))
-		BulletManager::ReleaseBullet(this);
+		_isDead = true;
 }
 
 void Bullet::ToDead() { BulletManager::ReleaseBullet(this); }
@@ -24,7 +24,7 @@ bool Bullet::FrameTimeWatch(int frame, int index) {
 Bullet::~Bullet() { delete _model; }
 
 void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Type type) {
-	_model = Model::CreateFromOBJ("Bullet", true);
+	//_model = Model::CreateFromOBJ("Bullet", true);
 	_viewProjection = viewProjection;
 	_worldTransform.Initialize();
 	_worldTransform.translation_ = position;
@@ -43,24 +43,22 @@ void Bullet::Update() {
 		ToDead();
 	Move();
 
+	// 因为直接获取旋转四元数，所以为了优化就不需要额外计算了
+	//_worldTransform.rotation_ = _rotate;
+	//  Vector3 frameRotate = _rotate - _beforeRotate;
+	//  Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
+	//_currentQuaternion = _currentQuaternion * frameQ;
 	_worldTransform.translation_ = _pos;
-	_worldTransform.rotation_ = _rotate;
-	Vector3 frameRotate = _rotate - _beforeRotate;
-	Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
-	_currentQuaternion = _currentQuaternion * frameQ;
 	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
 	_worldTransform.TransferMatrix();
-	_beforeRotate = _rotate;
+	//_beforeRotate = _rotate;
 
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
-void Bullet::Draw() {
-	if (_model != nullptr)
-		_model->Draw(_worldTransform, *_viewProjection);
-}
+void Bullet::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 
-void Bullet::Fire() { BulletManager::_updatePool_player.push_back(this); }
+void Bullet::Fire() { BulletManager::_updatePool_player.insert(this); }
 
 const Vector3 Bullet::GetWorldPosition() const {
 	Vector3 worldPos{};
@@ -86,16 +84,24 @@ Bullet* BulletManager::AcquireBullet(ViewProjection* viewProjection, const Vecto
 void BulletManager::ReleaseBullet(Bullet* bullet) {
 	switch (bullet->_type) {
 	case Bullet::tPlayer: {
-		auto it = std::find(_updatePool_player.begin(), _updatePool_player.end(), bullet);
+		auto it = _updatePool_player.find(bullet);
 		if (it != _updatePool_player.end()) {
 			_updatePool_player.erase(it);
+		}
+		if (bullet == nullptr) {
+			delete bullet;
+			return;
 		}
 		break;
 	}
 	case Bullet::tEnemy: {
-		auto it = std::find(_updatePool_enemy.begin(), _updatePool_enemy.end(), bullet);
+		auto it = _updatePool_enemy.find(bullet);
 		if (it != _updatePool_enemy.end()) {
 			_updatePool_enemy.erase(it);
+		}
+		if (bullet == nullptr) {
+			delete bullet;
+			return;
 		}
 		break;
 	}
@@ -105,18 +111,22 @@ void BulletManager::ReleaseBullet(Bullet* bullet) {
 
 void BulletManager::Updata() {
 	for (Bullet* it : _updatePool_player) {
-		it->Update();
+		if (it != nullptr)
+			it->Update();
 	}
 	for (Bullet* it : _updatePool_enemy) {
-		it->Update();
+		if (it != nullptr)
+			it->Update();
 	}
 }
 
 void BulletManager::Draw() {
 	for (Bullet* it : _updatePool_player) {
-		it->Draw();
+		if (it != nullptr)
+			it->Draw();
 	}
 	for (Bullet* it : _updatePool_enemy) {
-		it->Draw();
+		if (it != nullptr)
+			it->Draw();
 	}
 }

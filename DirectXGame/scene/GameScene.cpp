@@ -54,6 +54,11 @@ void GameScene::Initialize() {
 		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {-20.f * i, 20, -20}, _playerObj);
 		enemy->Fire();
 	}
+	// 预先生成并存放子弹，为了优化
+	// for (int i = 0; i < 1000; i++) {
+	//	Bullet* bullet = new Bullet();
+	//	BulletManager::_idlePool.push(bullet);
+	//}
 
 	// UI
 	_gameUIObj = new GameUI();
@@ -68,11 +73,11 @@ void GameScene::Update() {
 	_viewProjection.TransferMatrix();
 	// Obj
 	_skydomeObj->Update();
-	BulletManager::Updata();
 	_playerObj->Update();
 	_enemyObj->Update();
 	_earthBall->Update();
 	EnemyManager::Updata();
+	BulletManager::Updata();
 	// UI
 	_gameUIObj->Update();
 

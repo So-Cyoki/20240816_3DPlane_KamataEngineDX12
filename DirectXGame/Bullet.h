@@ -5,7 +5,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <queue>
-#include <vector>
+#include <unordered_set>
 
 class Bullet {
 
@@ -13,7 +13,7 @@ private:
 	// 基础属性
 	WorldTransform _worldTransform;
 	ViewProjection* _viewProjection = nullptr;
-	Model* _model = nullptr;
+	Model* _model = Model::CreateFromOBJ("Bullet", true);
 	Quaternion _currentQuaternion = {1, 0, 0, 0}; // 用来计算出四元数，保证旋转是完全没问题的
 	Vector3 _beforeRotate = {0, 0, 0};
 
@@ -22,9 +22,10 @@ private:
 	Sphere _sphere{};
 	float _radius = 0.1f;
 	Vector3 _scale = {0.2f, 0.2f, 0.2f};
-	int _liftTime = 3 * 60; // 最大存活时间
 
 	float _speed = 10.f;
+	int _liftTime = 3 * 60; // 最大存活时间
+
 	bool _isDead = false;
 
 	void Move();
@@ -36,7 +37,7 @@ private:
 
 public:
 	inline static enum Type { tPlayer, tEnemy } bulletType;
-	Type _type;
+	Type _type = tEnemy;
 
 	~Bullet();
 	void Initalize(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Type type);
@@ -52,8 +53,8 @@ public:
 
 class BulletManager {
 public:
-	inline static std::vector<Bullet*> _updatePool_player;
-	inline static std::vector<Bullet*> _updatePool_enemy;
+	inline static std::unordered_set<Bullet*> _updatePool_player;
+	inline static std::unordered_set<Bullet*> _updatePool_enemy;
 	inline static std::queue<Bullet*> _idlePool;
 
 	static void Updata();
