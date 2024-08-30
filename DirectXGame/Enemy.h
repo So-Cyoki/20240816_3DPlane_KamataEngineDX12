@@ -79,7 +79,7 @@ public:
 
 	// 工具
 	int _currentTimes[31] = {0};                       // 这个用于计时器的使用
-	bool FrameTimeWatch(int frame, int index);         // 计时器
+	bool FrameTimeWatch(int frame, int index);         // 一开始就会输出一次true
 	Quaternion RandomZRotation(float maxAngleRadians); // 按照输入的角度，随机一个Z轴的四元数
 
 public:

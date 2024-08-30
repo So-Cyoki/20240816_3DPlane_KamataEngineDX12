@@ -5,7 +5,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <queue>
-#include <unordered_set>
+#include <vector>
 
 class Bullet {
 
@@ -29,11 +29,10 @@ private:
 	bool _isDead = false;
 
 	void Move();
-	void ToDead();
 
 	// 工具
-	int _currentTimes[31] = {0}; // 这个用于计时器的使用
-	bool FrameTimeWatch(int frame, int index);
+	int _currentTimes[5] = {0};                      // 这个用于计时器的使用
+	bool FrameTimeWatch_false(int frame, int index); // 计时到了才会输出true
 
 public:
 	inline static enum Type { tPlayer, tEnemy } bulletType;
@@ -43,7 +42,8 @@ public:
 	void Initalize(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate, Type type);
 	void Update();
 	void Draw();
-	void Fire(); // 调用这个方法来发射出子弹
+	void Fire();   // 调用这个方法来发射出子弹
+	void ToDead(); // 死亡方法
 
 	const Vector3 GetWorldPosition() const;
 	const Sphere& GetSphere() const { return _sphere; };
@@ -53,8 +53,8 @@ public:
 
 class BulletManager {
 public:
-	inline static std::unordered_set<Bullet*> _updatePool_player;
-	inline static std::unordered_set<Bullet*> _updatePool_enemy;
+	inline static std::vector<Bullet*> _updatePool_player;
+	inline static std::vector<Bullet*> _updatePool_enemy;
 	inline static std::queue<Bullet*> _idlePool;
 
 	static void Updata();

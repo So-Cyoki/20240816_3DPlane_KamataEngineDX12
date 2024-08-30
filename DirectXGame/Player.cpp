@@ -121,6 +121,9 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 	_pos = position;
 	_currentQuaternion = {1, 0, 0, 0};
 	_beforeRotate = {0, 0, 0};
+
+	_velocity = {0, 0, 0};
+	_accelerations = {0, 0, 0};
 }
 
 void Player::Update() {

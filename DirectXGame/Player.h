@@ -48,8 +48,8 @@ private:
 	void Move();
 	void ArrowMove();
 	void Attack();
-	int _currentTimes[31] = {0}; // 这个用于计时器的使用
-	bool FrameTimeWatch(int frame, int index);
+	int _currentTimes[31] = {0};               // 这个用于计时器的使用
+	bool FrameTimeWatch(int frame, int index); // 一开始就会输出一次true
 
 public:
 	~Player();

@@ -14,6 +14,8 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 
 	_playerObj = playerObj;
 
+	_velocity = {0, 0, 0};
+	_accelerations = {0, 0, 0};
 	_currentState = State::Chase;
 	Enter_Chase();
 

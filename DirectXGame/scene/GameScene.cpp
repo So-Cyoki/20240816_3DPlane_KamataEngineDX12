@@ -46,19 +46,20 @@ void GameScene::Initialize() {
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, -100};
 	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj);
-	for (int i = 0; i < 4; i++) {
+	const int newEnemy = 4;
+	for (int i = 0; i < newEnemy; i++) {
 		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {20.f * i, 20, -20}, _playerObj);
 		enemy->Fire();
 	}
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < newEnemy; i++) {
 		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {-20.f * i, 20, -20}, _playerObj);
 		enemy->Fire();
 	}
 	// 预先生成并存放子弹，为了优化
-	// for (int i = 0; i < 1000; i++) {
-	//	Bullet* bullet = new Bullet();
-	//	BulletManager::_idlePool.push(bullet);
-	//}
+	for (int i = 0; i < 1000; i++) {
+		Bullet* bullet = new Bullet();
+		BulletManager::_idlePool.push(bullet);
+	}
 
 	// UI
 	_gameUIObj = new GameUI();
@@ -86,8 +87,8 @@ void GameScene::Update() {
 	bool isCollision = My3dTools::IsCollision(_playerObj->GetSphere(), _enemyObj->GetSphere());
 	// DebugText
 	ImGui::Begin("DeBug Window");
-	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
-	ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
+	// ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
+	// ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
 	ImGui::DragFloat3("Player Translate", (float*)&_playerObj->GetPos(), 0.01f);
 	ImGui::DragFloat3("Player Rotate", (float*)&_playerObj->GetRotate(), 0.01f);
 	ImGui::DragFloat3("Enemy Translate", (float*)&_enemyObj->GetPos(), 0.01f);
@@ -100,9 +101,11 @@ void GameScene::Update() {
 	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
-	ImGui::Text("Bullet = %d", int(BulletManager::_updatePool_player.size()));
-	ImGui::DragFloat3("Camera Pos Offset", (float*)&_cameraConObj->_posOffset, 0.01f);
-	ImGui::DragFloat3("Camera Rotate Offset", (float*)&_cameraConObj->_rotateOffset, 0.01f);
+	ImGui::Text("Bullet Player = %d", int(BulletManager::_updatePool_player.size()));
+	ImGui::Text("Bullet Enemy = %d", int(BulletManager::_updatePool_enemy.size()));
+	ImGui::Text("Bullet Idle = %d", int(BulletManager::_idlePool.size()));
+	// ImGui::DragFloat3("Camera Pos Offset", (float*)&_cameraConObj->_posOffset, 0.01f);
+	// ImGui::DragFloat3("Camera Rotate Offset", (float*)&_cameraConObj->_rotateOffset, 0.01f);
 	ImGui::End();
 #endif
 }
