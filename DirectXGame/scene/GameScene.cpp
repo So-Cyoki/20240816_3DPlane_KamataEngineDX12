@@ -20,6 +20,9 @@ GameScene::~GameScene() {
 	for (Enemy* it : EnemyManager::_updatePool)
 		delete it;
 	EnemyManager::_updatePool.clear();
+	for (Particle* it : ParticleManager::_updatePool)
+		delete it;
+	ParticleManager::_updatePool.clear();
 }
 
 void GameScene::Initialize() {
@@ -79,6 +82,7 @@ void GameScene::Update() {
 	_earthBall->Update();
 	EnemyManager::Updata();
 	BulletManager::Updata();
+	ParticleManager::Updata();
 	// UI
 	_gameUIObj->Update();
 
@@ -138,11 +142,12 @@ void GameScene::Draw() {
 	/// </summary>
 
 	_skydomeObj->Draw();
-	BulletManager::Draw();
 	_earthBall->Draw();
 	_playerObj->Draw();
 	_enemyObj->Draw();
 	EnemyManager::Draw();
+	BulletManager::Draw();
+	ParticleManager::Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

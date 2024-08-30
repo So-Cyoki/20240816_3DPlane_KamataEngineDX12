@@ -1,6 +1,7 @@
 #pragma once
 #include "Model.h"
 #include "My3DTools.h"
+#include "Particle.h"
 #include "Quaternion.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"

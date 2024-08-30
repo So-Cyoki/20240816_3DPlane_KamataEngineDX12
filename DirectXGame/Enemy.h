@@ -47,6 +47,7 @@ public:
 	State _currentState = State::Chase;
 
 	void Attack();
+	void IsCollision();
 	// 是否在瞄准目标
 	bool IsAimingAtPlayer(float maxAimAngleRadians);
 

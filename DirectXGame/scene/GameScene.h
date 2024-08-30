@@ -10,6 +10,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "My3DTools.h"
+#include "Particle.h"
 #include "Player.h"
 #include "Skydome.h"
 #include "Sprite.h"

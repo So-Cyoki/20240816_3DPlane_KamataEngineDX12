@@ -19,7 +19,7 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 	_currentState = State::Chase;
 	Enter_Chase();
 
-	std::srand(static_cast<unsigned int>(time(0)) + int(_pos.x));
+	std::srand(static_cast<unsigned int>(time(0)) + int(_pos.x)); // 设定随机种子
 }
 
 void Enemy::Update() {
@@ -50,6 +50,9 @@ void Enemy::Update() {
 	_velocity.y = std ::clamp(_velocity.y, -_moveMax, _moveMax);
 	_velocity.z = std ::clamp(_velocity.z, -_moveMax, _moveMax);
 	_pos += _velocity;
+
+	// 碰撞
+	IsCollision();
 
 	// 旋转必须使用四元数，而且是每帧计算的四元数，这才可以保证旋转绝对是没问题的
 	// 现在直接控制四元数来决定它的旋转方向，所以不会去调整rotate的值
@@ -84,7 +87,7 @@ Quaternion Enemy::RandomZRotation(float maxAngleRadians) {
 	// 生成一个在 [-maxAngleRadians, maxAngleRadians] 范围内的随机角度
 	float randomAngle = ((float)std::rand() / RAND_MAX) * 2.0f * maxAngleRadians - maxAngleRadians;
 	// 返回对应的 Z 轴旋转四元数
-	return Quaternion{std::cos(randomAngle / 2), 0.0f, 0.0f, std::sin(randomAngle / 2)};
+	return Quaternion{std::cosf(randomAngle / 2), 0.0f, 0.0f, std::sinf(randomAngle / 2)};
 }
 
 void Enemy::Attack() {
@@ -100,6 +103,21 @@ void Enemy::Attack() {
 	bullet1->Fire();
 	Bullet* bullet2 = BulletManager::AcquireBullet(_viewProjection, bulletBornPos2, _currentQuaternion, Bullet::tEnemy);
 	bullet2->Fire();
+}
+
+void Enemy::IsCollision() {
+	// Bullet
+	for (Bullet* bullet : BulletManager::_updatePool_player) {
+		if (My3dTools::IsCollision(bullet->GetSphere(), _sphere)) {
+			bullet->SetIsDead(true);
+		}
+	}
+	// Player
+	if (My3dTools::IsCollision(_sphere, _playerObj->GetSphere())) {
+		Vector3 vel = _playerObj->GetVelocity();
+		vel *= -1;
+		_playerObj->SetVelocity(vel);
+	}
 }
 
 bool Enemy::IsAimingAtPlayer(float maxAimAngleRadians) {

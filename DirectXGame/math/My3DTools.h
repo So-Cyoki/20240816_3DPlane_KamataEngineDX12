@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "algorithm"
 #include <cmath>
+#include <random>
 
 // 球(Vector3 中心、float 半径)
 struct Sphere final {
@@ -129,4 +130,29 @@ public:
 		sphere.center = worldPos;
 		return sphere;
 	};
+	// 按照范围，生成一个绕轴旋转的随机四元数(X:0,Y:1,Z:2)
+	static Quaternion RandomRotation(float maxRadians, int xyz) {
+		// 生成一个在 [-maxAngleRadians, maxAngleRadians] 范围内的随机角度
+		std::random_device rd;
+		std::mt19937 gen(rd());                                                 // 使用随机设备初始化种子
+		std::uniform_real_distribution<float> distrib(-maxRadians, maxRadians); // 指定 float 类型的分布
+		float randomAngle = distrib(gen);
+		switch (xyz) {
+		case 0:
+			return Quaternion{std::cosf(randomAngle / 2), std::sinf(randomAngle / 2), 0.0f, 0.0f};
+			break;
+		case 1:
+			return Quaternion{
+			    std::cosf(randomAngle / 2),
+			    0.0f,
+			    std::sinf(randomAngle / 2),
+			    0.0f,
+			};
+			break;
+		case 2:
+			return Quaternion{std::cosf(randomAngle / 2), 0.0f, 0.0f, std::sinf(randomAngle / 2)};
+			break;
+		}
+		return Quaternion{std::cosf(randomAngle / 2), 0.0f, 0.0f, std::sinf(randomAngle / 2)};
+	}
 };

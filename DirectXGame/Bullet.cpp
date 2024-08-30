@@ -2,11 +2,14 @@
 
 void Bullet::Move() {
 	Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
-
 	_pos += front * _speed;
 }
 
-void Bullet::ToDead() { BulletManager::ReleaseBullet(this); }
+void Bullet::ToDead() {
+	ParticleManager::ADD_Hurt(_viewProjection, _pos, _currentQuaternion);
+	BulletManager::ReleaseBullet(this);
+	_isDead = false;
+}
 
 bool Bullet::FrameTimeWatch_false(int frame, int index) {
 	if (_currentTimes[index] > frame) {
@@ -128,15 +131,9 @@ void BulletManager::Updata() {
 
 void BulletManager::Draw() {
 	for (Bullet* it : _updatePool_player) {
-		if (!it->GetIsDead())
-			it->Draw();
-		else
-			it->ToDead();
+		it->Draw();
 	}
 	for (Bullet* it : _updatePool_enemy) {
-		if (!it->GetIsDead())
-			it->Draw();
-		else
-			it->ToDead();
+		it->Draw();
 	}
 }
