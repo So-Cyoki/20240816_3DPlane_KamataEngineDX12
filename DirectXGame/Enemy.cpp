@@ -32,7 +32,7 @@ void Enemy::Update() {
 			// Enter_Orbit();
 			//_currentState = State::Orbit;
 		}
-		Update_Chase();
+		// Update_Chase();
 		break;
 	case Enemy::State::Raid:
 		break;
@@ -180,7 +180,8 @@ Enemy* EnemyManager::AcquireEnemy(ViewProjection* viewProjection, const Vector3&
 void EnemyManager::ReleaseEnemy(Enemy* enemy) {
 	auto it = std::find(_updatePool.begin(), _updatePool.end(), enemy);
 	if (it != _updatePool.end()) {
-		_updatePool.erase(it);
+		std::swap(*it, _updatePool.back());
+		_updatePool.pop_back();
+		_idlePool.push(enemy);
 	}
-	_idlePool.push(enemy);
 }

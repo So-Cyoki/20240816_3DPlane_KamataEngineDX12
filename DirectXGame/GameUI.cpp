@@ -20,6 +20,8 @@ void GameUI::Initalize(int screenWidth, int screenHeight, Player* playerObj) {
 
 	_spArrow2 = MyCreate("Sprites/GameUI.png");
 	_spArrow2->SetPosition({_width / 2, _height / 2});
+	//_spArrow2->SetRotation(1);
+	//_spArrow2->SetSize({1280 * 2, 720 * 2});
 	_spList.push_back(_spArrow2);
 	_spArrow1 = MyCreate("Sprites/arrow_mouse.png");
 	_spArrow1->SetPosition({_width / 2, _height / 2});

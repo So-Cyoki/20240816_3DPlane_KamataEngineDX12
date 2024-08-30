@@ -56,10 +56,10 @@ void GameScene::Initialize() {
 		enemy->Fire();
 	}
 	// 预先生成并存放子弹，为了优化
-	for (int i = 0; i < 1000; i++) {
-		Bullet* bullet = new Bullet();
-		BulletManager::_idlePool.push(bullet);
-	}
+	// for (int i = 0; i < 1000; i++) {
+	//	Bullet* bullet = new Bullet();
+	//	BulletManager::_idlePool.push(bullet);
+	//}
 
 	// UI
 	_gameUIObj = new GameUI();
