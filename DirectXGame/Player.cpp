@@ -124,6 +124,10 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 
 	_velocity = {0, 0, 0};
 	_accelerations = {0, 0, 0};
+
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
 void Player::Update() {

@@ -20,6 +20,10 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 	Enter_Chase();
 
 	std::srand(static_cast<unsigned int>(time(0)) + int(_pos.x)); // 设定随机种子
+
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
 void Enemy::Update() {

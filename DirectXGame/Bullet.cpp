@@ -8,7 +8,6 @@ void Bullet::Move() {
 void Bullet::ToDead() {
 	ParticleManager::ADD_Hurt(_viewProjection, _pos, _currentQuaternion);
 	BulletManager::ReleaseBullet(this);
-	_isDead = false;
 }
 
 bool Bullet::FrameTimeWatch_false(int frame, int index) {
@@ -35,6 +34,10 @@ void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, 
 
 	_type = type;
 	_isDead = false;
+	// 必须在初始化的时候就更新world矩阵和碰撞体呀！不然肯定会重复判定的呀！
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
 void Bullet::Update() {
