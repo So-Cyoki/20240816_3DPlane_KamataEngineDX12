@@ -2,7 +2,7 @@
 
 Enemy::~Enemy() { delete _model; }
 
-void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, Player* playerObj) {
+void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, Player* playerObj, GameUI* gameUIObj) {
 	_model = Model::CreateFromOBJ("Enemy", true);
 	_viewProjection = viewProjection;
 	_worldTransform.Initialize();
@@ -13,6 +13,7 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 	_beforeRotate = {0, 0, 0};
 
 	_playerObj = playerObj;
+	_gameUIObj = gameUIObj;
 	_isHurt = false;
 	_isDead = false;
 
@@ -31,15 +32,16 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 
 void Enemy::Update() {
 	// 生命值检测
-	if (_hp <= 0)
+	if (_hp <= 0) {
 		_isDead = true;
+	}
 	// 状态机
 	switch (_currentState) {
 	case Enemy::State::Chase:
 		if (IsExit_Chase()) {
-			_currentState = State::Flee;
+			//_currentState = State::Flee;
 		}
-		Update_Chase();
+		// Update_Chase();
 		break;
 	case Enemy::State::Raid:
 		break;
@@ -79,6 +81,7 @@ void Enemy::Update() {
 	//_beforeRotate = _rotate;
 
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
+	_isHurt = false;
 }
 
 void Enemy::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
@@ -87,6 +90,7 @@ void Enemy::Fire() { EnemyManager::_updatePool.push_back(this); }
 
 void Enemy::ToDead() {
 	if (FrameTimeWatch(_deadTime, 2, false)) {
+		_gameUIObj->DeadScore();
 		EnemyManager::ReleaseEnemy(this);
 	} else {
 		if (FrameTimeWatch(_deadTime_boom, 3, true)) {
@@ -160,7 +164,9 @@ void Enemy::IsCollision() {
 		if (My3dTools::IsCollision(bullet->GetSphere(), _sphere)) {
 			bullet->SetIsHurt(true);
 
+			_isHurt = true;
 			_hp -= _playerObj->GetAttackValue();
+			_gameUIObj->HurtScore();
 			// 给一个冲击的力
 			Vector3 front = My3dTools::GetDirection_front(bullet->GetQuaternion());
 			_velocity += front * _hurtVel;
@@ -249,15 +255,15 @@ void EnemyManager::Draw() {
 	}
 }
 
-Enemy* EnemyManager::AcquireEnemy(ViewProjection* viewProjection, const Vector3& position, Player* playerObj) {
+Enemy* EnemyManager::AcquireEnemy(ViewProjection* viewProjection, const Vector3& position, Player* playerObj, GameUI* gameUIObj) {
 	if (_idlePool.empty()) {
 		Enemy* enemy = new Enemy();
-		enemy->Initalize(viewProjection, position, playerObj);
+		enemy->Initalize(viewProjection, position, playerObj, gameUIObj);
 		return enemy;
 	} else {
 		Enemy* enemy = _idlePool.front();
 		_idlePool.pop();
-		enemy->Initalize(viewProjection, position, playerObj);
+		enemy->Initalize(viewProjection, position, playerObj, gameUIObj);
 		return enemy;
 	}
 }

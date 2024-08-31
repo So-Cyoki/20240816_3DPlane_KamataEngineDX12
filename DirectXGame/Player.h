@@ -25,7 +25,7 @@ private:
 	float _moveMaxLength = ViewProjection::_kFarZ * 0.35f; // 最大移动距离
 
 	// 物理移动
-	float _moveSpeed = 0.6f * 0.001f;      // 每次增加的速度
+	float _moveSpeed = 0.8f * 0.001f;      // 每次增加的油门
 	float _rotationSpeed = 0.7f * 0.0001f; // 拐弯转向速度
 	float _adRotationSpeed = 0.1f * 0.1f;  // 控制左右翻转
 	float _moveBrakeSpeed = 0.05f;         // 相对静止速度，刹车（0~1）

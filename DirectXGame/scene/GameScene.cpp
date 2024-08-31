@@ -46,18 +46,24 @@ void GameScene::Initialize() {
 	_earthBall = new EarthBall;
 	_earthBall->Initialize(&_viewProjection, _playerObj);
 
+	// UI
+	_gameUIObj = new GameUI();
+	_gameUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight, _playerObj);
+
+	// Enemy
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, -100};
-	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj);
-	const int newEnemy = 0;
+	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj, _gameUIObj);
+	const int newEnemy = 4;
 	for (int i = 0; i < newEnemy; i++) {
-		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {20.f * i, 20, -20}, _playerObj);
+		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {20.f * i, 20, -20}, _playerObj, _gameUIObj);
 		enemy->Fire();
 	}
 	for (int i = 0; i < newEnemy; i++) {
-		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {-20.f * i, 20, -20}, _playerObj);
+		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {-20.f * i, 20, -20}, _playerObj, _gameUIObj);
 		enemy->Fire();
 	}
+
 	// 预先生成并存放子弹，为了优化
 	// for (int i = 0; i < 2000; i++) {
 	//	Bullet* bullet = new Bullet();
@@ -67,10 +73,6 @@ void GameScene::Initialize() {
 	//	Particle* par = new Particle();
 	//	ParticleManager::_idlePool.push(par);
 	//}
-
-	// UI
-	_gameUIObj = new GameUI();
-	_gameUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight, _playerObj);
 }
 
 void GameScene::Update() {

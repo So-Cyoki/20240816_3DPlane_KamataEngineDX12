@@ -1,5 +1,6 @@
 #pragma once
 #include "Bullet.h"
+#include "GameUI.h"
 #include "Model.h"
 #include "My3DTools.h"
 #include "Particle.h"
@@ -44,6 +45,7 @@ public:
 	int _fleeTime = 5 * 60;                          // 逃跑时间
 
 	Player* _playerObj = nullptr;
+	GameUI* _gameUIObj = nullptr;
 	bool _isHurt = false;
 	bool _isDead = false;
 	int _deadTime = 5 * 60;              // 多久后结束死亡动画（回收敌人）
@@ -93,7 +95,7 @@ public:
 
 public:
 	~Enemy();
-	void Initalize(ViewProjection* viewProjection, const Vector3& position, Player* playerObj);
+	void Initalize(ViewProjection* viewProjection, const Vector3& position, Player* playerObj, GameUI* gameUIObj);
 	void Update();
 	void Draw();
 	void Fire();   // 调用这个方法来触发敌人
@@ -116,7 +118,7 @@ public:
 	static void Draw();
 
 	// 获取一个对象，并且初始化
-	static Enemy* AcquireEnemy(ViewProjection* viewProjection, const Vector3& position, Player* playerObj);
+	static Enemy* AcquireEnemy(ViewProjection* viewProjection, const Vector3& position, Player* playerObj, GameUI* gameUIObj);
 	// 回收一个对象
 	static void ReleaseEnemy(Enemy* enemy);
 };
