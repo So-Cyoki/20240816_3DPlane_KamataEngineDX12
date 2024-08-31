@@ -9,15 +9,14 @@ void EarthBall::IsCollision() {
 		_playerObj->SetVelocity(vel);
 	}
 	// Bullet
-	// 子弹的生成好像必定会在原点初始化，所以发生碰撞就会触发Dead方法，这个有空再解决
-	// for (Bullet* it : BulletManager::_updatePool_player) {
-	//	if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
-	//		it->SetIsDead(true);
-	//}
-	// for (Bullet* it : BulletManager::_updatePool_enemy) {
-	//	if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
-	//		it->SetIsDead(true);
-	//}
+	for (Bullet* it : BulletManager::_updatePool_player) {
+		if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
+			it->SetIsDead(true);
+	}
+	for (Bullet* it : BulletManager::_updatePool_enemy) {
+		if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
+			it->SetIsDead(true);
+	}
 }
 
 EarthBall::~EarthBall() { delete _model; }

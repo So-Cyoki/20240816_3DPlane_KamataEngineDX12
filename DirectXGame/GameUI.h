@@ -7,7 +7,7 @@
 #include "vector"
 
 class GameUI {
-private:
+public:
 	uint32_t _textureHandle = 0;
 	float _width = 0;
 	float _height = 0;
@@ -15,10 +15,15 @@ private:
 
 	std::vector<Sprite*> _spList{}; // 用来储存所有声明出来的对象，方便统一调用和销毁
 	Sprite* _spArrow1 = nullptr;
-	Vector2 _spArrow1Pos{};
 	Sprite* _spArrow2 = nullptr;
+	Sprite* _spHpArray[9];
+	Sprite* _spSpeed = nullptr;
+	Vector2 _posStartSpeed = {452, 494};
+	Vector2 _posEndSpeed = {409, 404};
 
-	Sprite* MyCreate(const std::string& fileName);
+	void SpriteHp_Initalize();
+	void SpriteHp_Draw();
+	Sprite* MyCreate(const std::string& fileName, Vector2 pos);
 
 public:
 	~GameUI();

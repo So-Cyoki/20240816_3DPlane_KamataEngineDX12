@@ -86,7 +86,7 @@ void Player::ArrowMove() {
 }
 
 void Player::Attack() {
-	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch(_attackTime, 1)) {
+	if (Input::GetInstance()->IsPressMouse(0) && FrameTimeWatch_true(_attackTime, 1)) {
 		Vector3 offset = {1, 1, 2}; // 调整子弹的出现位置
 
 		Vector3 up = My3dTools::GetDirection_up(_currentQuaternion);
@@ -102,7 +102,23 @@ void Player::Attack() {
 	}
 }
 
-bool Player::FrameTimeWatch(int frame, int index) {
+void Player::IsCollision() {
+	// Bullet
+	for (Bullet* bullet : BulletManager::_updatePool_enemy) {
+		if (My3dTools::IsCollision(bullet->GetSphere(), _sphere)) {
+			bullet->SetIsHurt(true);
+
+			_hp -= _hurtHp;
+			// 给一个冲击的力
+			Vector3 front = My3dTools::GetDirection_front(bullet->GetQuaternion());
+			_velocity += front * _hurtVel;
+		}
+	}
+}
+
+void Player::ToDead() {}
+
+bool Player::FrameTimeWatch_true(int frame, int index) {
 	if (_currentTimes[index] <= 0) {
 		_currentTimes[index] = frame;
 		return true;
@@ -125,29 +141,42 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 	_velocity = {0, 0, 0};
 	_accelerations = {0, 0, 0};
 
+	_isDead = false;
+	_hp = _hpMax;
+
 	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
 	_worldTransform.TransferMatrix();
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
 void Player::Update() {
-	if (!Input::GetInstance()->PushKey(DIK_LSHIFT))
-		ArrowMove();
-	Move();
-	Attack();
+	// 生命检测
+	if (_hp <= 0) {
+		//_isDead = true;
+	}
+	if (_isDead) {
+		_hp = 0;
+		ToDead();
+	} else {
+		if (!Input::GetInstance()->PushKey(DIK_LSHIFT))
+			ArrowMove();
+		Move();
+		Attack();
+		IsCollision();
 
-	// 旋转必须使用四元数，而且是每帧计算的四元数，这才可以保证旋转绝对是没问题的
-	_worldTransform.translation_ = _pos;
-	_worldTransform.rotation_ = _rotate;
-	Vector3 frameRotate = _rotate - _beforeRotate;
-	Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
-	_currentQuaternion = _currentQuaternion * frameQ;
-	_currentQuaternion.normalize();
-	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
-	_worldTransform.TransferMatrix();
-	_beforeRotate = _rotate;
+		// 旋转必须使用四元数，而且是每帧计算的四元数，这才可以保证旋转绝对是没问题的
+		_worldTransform.translation_ = _pos;
+		_worldTransform.rotation_ = _rotate;
+		Vector3 frameRotate = _rotate - _beforeRotate;
+		Quaternion frameQ = Quaternion::RadianToQuaternion(frameRotate);
+		_currentQuaternion = _currentQuaternion * frameQ;
+		_currentQuaternion.normalize();
+		_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+		_worldTransform.TransferMatrix();
+		_beforeRotate = _rotate;
 
-	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
+		_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
+	}
 }
 
 void Player::Draw() { _model->Draw(_worldTransform, *_viewProjection); }

@@ -13,11 +13,14 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 	_beforeRotate = {0, 0, 0};
 
 	_playerObj = playerObj;
+	_isHurt = false;
+	_isDead = false;
+
+	_hp = 20;
 
 	_velocity = {0, 0, 0};
 	_accelerations = {0, 0, 0};
 	_currentState = State::Chase;
-	Enter_Chase();
 
 	std::srand(static_cast<unsigned int>(time(0)) + int(_pos.x)); // 设定随机种子
 
@@ -27,22 +30,26 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 }
 
 void Enemy::Update() {
+	// 生命值检测
+	if (_hp <= 0)
+		_isDead = true;
 	// 状态机
 	switch (_currentState) {
 	case Enemy::State::Chase:
 		if (IsExit_Chase()) {
-			Exit_Chase();
-			// 判断条件
-			// Enter_Orbit();
-			//_currentState = State::Orbit;
+			_currentState = State::Flee;
 		}
-		// Update_Chase();
+		Update_Chase();
 		break;
 	case Enemy::State::Raid:
 		break;
 	case Enemy::State::Orbit:
 		break;
 	case Enemy::State::Flee:
+		if (IsExit_Flee()) {
+			_currentState = State::Chase;
+		}
+		Update_Flee();
 		break;
 	case Enemy::State::Dead:
 		break;
@@ -78,12 +85,50 @@ void Enemy::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 
 void Enemy::Fire() { EnemyManager::_updatePool.push_back(this); }
 
-bool Enemy::FrameTimeWatch(int frame, int index) {
-	if (_currentTimes[index] <= 0) {
-		_currentTimes[index] = frame;
-		return true;
+void Enemy::ToDead() {
+	if (FrameTimeWatch(_deadTime, 2, false)) {
+		EnemyManager::ReleaseEnemy(this);
+	} else {
+		if (FrameTimeWatch(_deadTime_boom, 3, true)) {
+			ParticleManager::ADD_Boom(_viewProjection, _pos, _currentQuaternion);
+		}
+		if (FrameTimeWatch(_deadTime_boom2, 4, true)) {
+			ParticleManager::ADD_Hurt(_viewProjection, _pos, _currentQuaternion);
+		}
 	}
-	_currentTimes[index]--;
+}
+
+void Enemy::Update_Flee() {
+	// 计算前进方向
+	Vector3 forward = My3dTools::GetDirection_front(_currentQuaternion);
+	_accelerations = forward * _speed;
+	// 攻击
+	float length = (_playerObj->GetPos() - _pos).Length();
+	if (IsAimingAtPlayer(_aimingRadian) && length < _aimingLength) {
+		Attack();
+	}
+}
+
+bool Enemy::IsExit_Flee() {
+	if (FrameTimeWatch(_fleeTime, 1, false))
+		return true;
+	return false;
+}
+
+bool Enemy::FrameTimeWatch(int frame, int index, bool first) {
+	if (!first) {
+		if (_currentTimes[index] > frame) {
+			_currentTimes[index] = 0;
+			return true;
+		}
+		_currentTimes[index]++;
+	} else {
+		if (_currentTimes[index] <= 0) {
+			_currentTimes[index] = frame;
+			return true;
+		}
+		_currentTimes[index]--;
+	}
 	return false;
 }
 
@@ -113,14 +158,30 @@ void Enemy::IsCollision() {
 	// Bullet
 	for (Bullet* bullet : BulletManager::_updatePool_player) {
 		if (My3dTools::IsCollision(bullet->GetSphere(), _sphere)) {
-			bullet->SetIsDead(true);
+			bullet->SetIsHurt(true);
+
+			_hp -= _playerObj->GetAttackValue();
+			// 给一个冲击的力
+			Vector3 front = My3dTools::GetDirection_front(bullet->GetQuaternion());
+			_velocity += front * _hurtVel;
 		}
 	}
 	// Player
 	if (My3dTools::IsCollision(_sphere, _playerObj->GetSphere())) {
 		Vector3 vel = _playerObj->GetVelocity();
-		vel *= -1;
+		vel *= -2;
 		_playerObj->SetVelocity(vel);
+		_velocity *= -10;
+
+		Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
+		ParticleManager::ADD_Hurt(_viewProjection, _pos + (front * 8), _currentQuaternion);
+		ParticleManager::ADD_Hurt(_viewProjection, _pos + (front * 8), _currentQuaternion);
+		ParticleManager::ADD_Hurt(_viewProjection, _pos + (front * 8), _currentQuaternion);
+
+		_hp -= _playerObj->GetAttackValue() * 10;
+		float playerHp = _playerObj->GetHp();
+		playerHp -= _playerObj->GetAttackValue() * 5;
+		_playerObj->SetHp(playerHp);
 	}
 }
 
@@ -140,31 +201,30 @@ bool Enemy::IsAimingAtPlayer(float maxAimAngleRadians) {
 	return angleBetween <= maxAimAngleRadians;
 }
 
-void Enemy::Enter_Chase() {}
-
-void Enemy::Exit_Chase() {}
-
 void Enemy::Update_Chase() {
-	// 更新位置
+	// 跟踪目标
 	Quaternion targetQ = Quaternion::LookAt(_pos, _playerObj->GetPos());
-	if (FrameTimeWatch(300, 1)) {
+	if (FrameTimeWatch(300, 0, false)) {
 		float maxZangle = 30 * std::acosf(-1) / 180; // 随机给Z轴转一下，更自然
 		_randomZ = RandomZRotation(maxZangle);
 	}
 	Quaternion finalQ = _randomZ * targetQ;
 	_currentQuaternion = Quaternion::Slerp(_currentQuaternion, finalQ, _rotateSpeed);
-	// Quaternion q = _currentQuaternion;
-	// Vector3 forward = {2.0f * (q.x * q.z + q.w * q.y), 2.0f * (q.y * q.z - q.w * q.x), 1.0f - 2.0f * (q.x * q.x + q.y * q.y)};
+	// 计算前进方向
 	Vector3 forward = My3dTools::GetDirection_front(_currentQuaternion);
 	_accelerations = forward * _speed;
-
+	// 攻击
 	float length = (_playerObj->GetPos() - _pos).Length();
 	if (IsAimingAtPlayer(_aimingRadian) && length < _aimingLength) {
 		Attack();
 	}
 }
 
-bool Enemy::IsExit_Chase() { return false; }
+bool Enemy::IsExit_Chase() {
+	if (_isHurt)
+		return true;
+	return false;
+}
 
 const Vector3 Enemy::GetWorldPosition() const {
 	Vector3 worldPos{};
@@ -176,7 +236,10 @@ const Vector3 Enemy::GetWorldPosition() const {
 
 void EnemyManager::Updata() {
 	for (Enemy* it : _updatePool) {
-		it->Update();
+		if (!it->GetIsDead())
+			it->Update();
+		else
+			it->ToDead();
 	}
 }
 

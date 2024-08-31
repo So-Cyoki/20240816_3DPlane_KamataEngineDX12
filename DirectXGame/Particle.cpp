@@ -1,20 +1,33 @@
 #include "Particle.h"
 
 void Particle::Move() {
-	Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
 	switch (_type) {
 	case Particle::tHurt:
-		front *= -1; // 不知道要怎么翻转四元数，所以翻转前进方向好了
-		break;
-	case Particle::tBoom:
+	case Particle::tBoom2: {
+		if (!FrameTimeWatch(_lifeTime, 1)) {
+			float t = _currentTimes[1] / (float)_lifeTime;
+			_pos += _moveDir * _speed * (1 - EaseOutQuart(t));
+			_scale = _targetScale * (1 - EaseOutQuart(t));
+			Quaternion rotate = {1, 0.1f, 0, 0.1f};
+			_currentQuaternion = rotate * _currentQuaternion;
+		}
 		break;
 	}
-	_pos += front * _speed;
+	case Particle::tBoom: {
+		if (!FrameTimeWatch(_lifeTime, 1)) {
+			float t = _currentTimes[1] / (float)_lifeTime;
+			_scale = _targetScale * EaseOutBack(t);
+			Quaternion rotate = {1, 0.01f, 0.01f, 0.01f};
+			_currentQuaternion = rotate * _currentQuaternion;
+		}
+		break;
+	}
+	}
 }
 
 void Particle::ToDead() { ParticleManager::ReleaseParticle(this); }
 
-bool Particle::FrameTimeWatch_false(int frame, int index) {
+bool Particle::FrameTimeWatch(int frame, int index) {
 	if (_currentTimes[index] > frame) {
 		_currentTimes[index] = 0;
 		return true;
@@ -34,16 +47,39 @@ void Particle::Initalize(ViewProjection* viewProjection, const Vector3& position
 
 	switch (_type) {
 	case Particle::tHurt: {
-		_scale = {0.3f, 0.3f, 0.3f};
-		float randRadian = 10 * std::acosf(-1) / 180; // 随机轴转一下，更自然
+		float scale = 0.6f;
+		_targetScale = {scale, scale, scale};
+		_speed = 0.5f;
+		_lifeTime = 1 * 60;
+
+		float randRadian = 15 * std::acosf(-1) / 180; // 方向随机轴转一下，更自然
 		Quaternion randX = My3dTools::RandomRotation(randRadian, 0);
 		Quaternion randY = My3dTools::RandomRotation(randRadian, 1);
 		_currentQuaternion = randX * _currentQuaternion;
 		_currentQuaternion = randY * _currentQuaternion;
+
+		_moveDir = My3dTools::GetDirection_front(_currentQuaternion) * -1;
 		break;
 	}
 	case Particle::tBoom: {
+		float scale = 5.f;
+		_targetScale = {scale, scale, scale};
+		_lifeTime = 1 * 60;
+		break;
+	}
+	case Particle::tBoom2: {
+		float scale = 1.f;
+		_targetScale = {scale, scale, scale};
+		_speed = 0.5f;
+		_lifeTime = 3 * 60;
 
+		float randRadian = 15 * std::acosf(-1) / 180; // 方向随机轴转一下，更自然
+		Quaternion randX = My3dTools::RandomRotation(randRadian, 0);
+		Quaternion randY = My3dTools::RandomRotation(randRadian, 1);
+		_currentQuaternion = randX * _currentQuaternion;
+		_currentQuaternion = randY * _currentQuaternion;
+
+		_moveDir = My3dTools::GetDirection_front(_currentQuaternion) * -1;
 		break;
 	}
 	}
@@ -52,7 +88,7 @@ void Particle::Initalize(ViewProjection* viewProjection, const Vector3& position
 }
 
 void Particle::Update() {
-	if (FrameTimeWatch_false(_liftTime, 0)) {
+	if (FrameTimeWatch(_lifeTime, 0)) {
 		_isDead = true;
 	}
 	Move();
@@ -63,7 +99,17 @@ void Particle::Update() {
 	_worldTransform.TransferMatrix();
 }
 
-void Particle::Draw() { _model->Draw(_worldTransform, *_viewProjection, _textureHandle); }
+void Particle::Draw() {
+	switch (_type) {
+	case Particle::tHurt:
+	case Particle::tBoom2:
+		_model->Draw(_worldTransform, *_viewProjection, _textureHandle_hurt);
+		break;
+	case Particle::tBoom:
+		_model->Draw(_worldTransform, *_viewProjection, _textureHandle_boom);
+		break;
+	}
+}
 
 void Particle::Fire() { ParticleManager::_updatePool.push_back(this); }
 
@@ -78,10 +124,22 @@ const Vector3 Particle::GetWorldPosition() const {
 void ParticleManager::ADD_Hurt(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate) {
 	Particle* p1 = AcquireParticle(viewProjection, position, rotate, Particle::tHurt);
 	p1->Fire();
-	Particle* p2 = AcquireParticle(viewProjection, position, rotate, Particle::tHurt);
+	// Particle* p2 = AcquireParticle(viewProjection, position, rotate, Particle::tHurt);
+	// p2->Fire();
+	// Particle* p3 = AcquireParticle(viewProjection, position, rotate, Particle::tHurt);
+	// p3->Fire();
+}
+
+void ParticleManager::ADD_Boom(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate) {
+	Particle* p1 = AcquireParticle(viewProjection, position, rotate, Particle::tBoom);
+	p1->Fire();
+}
+
+void ParticleManager::ADD_Boom2(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate) {
+	Particle* p1 = AcquireParticle(viewProjection, position, rotate, Particle::tBoom2);
+	p1->Fire();
+	Particle* p2 = AcquireParticle(viewProjection, position, rotate, Particle::tBoom2);
 	p2->Fire();
-	Particle* p3 = AcquireParticle(viewProjection, position, rotate, Particle::tHurt);
-	p3->Fire();
 }
 
 void ParticleManager::Updata() {

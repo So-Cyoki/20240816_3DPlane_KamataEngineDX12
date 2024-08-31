@@ -40,7 +40,7 @@ void GameScene::Initialize() {
 	_skydomeObj = new Skydome();
 	_skydomeObj->Initialize(&_viewProjection);
 	_playerObj = new Player();
-	Vector3 playerPos = {0, 0, -120};
+	Vector3 playerPos = {0, 0, -200};
 	_playerObj->Initalize(&_viewProjection, playerPos);
 	_cameraConObj->SetTarget(_playerObj);
 	_earthBall = new EarthBall;
@@ -49,7 +49,7 @@ void GameScene::Initialize() {
 	_enemyObj = new Enemy();
 	Vector3 enemyPos = {0, 0, -100};
 	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj);
-	const int newEnemy = 4;
+	const int newEnemy = 0;
 	for (int i = 0; i < newEnemy; i++) {
 		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {20.f * i, 20, -20}, _playerObj);
 		enemy->Fire();
@@ -59,9 +59,13 @@ void GameScene::Initialize() {
 		enemy->Fire();
 	}
 	// 预先生成并存放子弹，为了优化
-	// for (int i = 0; i < 1000; i++) {
+	// for (int i = 0; i < 2000; i++) {
 	//	Bullet* bullet = new Bullet();
 	//	BulletManager::_idlePool.push(bullet);
+	//}
+	// for (int i = 0; i < 5000; i++) {
+	//	Particle* par = new Particle();
+	//	ParticleManager::_idlePool.push(par);
 	//}
 
 	// UI
@@ -98,6 +102,7 @@ void GameScene::Update() {
 	ImGui::DragFloat3("Enemy Translate", (float*)&_enemyObj->GetPos(), 0.01f);
 	// ImGui::DragFloat3("Enemy Rotate", (float*)&_enemyObj->GetRotate(), 0.01f);
 	ImGui::DragFloat4("Enemy Quaternion", (float*)&_enemyObj->_currentQuaternion, 0.01f);
+	ImGui::Text("EnemyHp = %f", _enemyObj->GetHp());
 	ImGui::Spacing();
 	ImGui::Separator();
 	ImGui::Spacing();
@@ -105,9 +110,14 @@ void GameScene::Update() {
 	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
 	ImGui::Text("Bullet Player = %d", int(BulletManager::_updatePool_player.size()));
 	ImGui::Text("Bullet Enemy = %d", int(BulletManager::_updatePool_enemy.size()));
 	ImGui::Text("Bullet Idle = %d", int(BulletManager::_idlePool.size()));
+	ImGui::Text("Particle update = %d", int(ParticleManager::_updatePool.size()));
+	ImGui::Text("Particle Idle = %d", int(ParticleManager::_idlePool.size()));
 	// ImGui::DragFloat3("Camera Pos Offset", (float*)&_cameraConObj->_posOffset, 0.01f);
 	// ImGui::DragFloat3("Camera Rotate Offset", (float*)&_cameraConObj->_rotateOffset, 0.01f);
 	ImGui::End();

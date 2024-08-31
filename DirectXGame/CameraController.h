@@ -1,4 +1,6 @@
 #pragma once
+#include "Bullet.h"
+#include "Input.h"
 #include "Player.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
@@ -16,9 +18,13 @@ public:
 
 	Vector3 _targetPos{};                 // 目標の位置
 	Vector3 _targetRotate{};              // 目標の回転
-	Vector3 _posOffset = {0, 4.f, -15.f}; // カメラとターゲットの距離の差
+	Vector3 _posOffset = {0, 4.f, -20.f}; // カメラとターゲットの距離の差
 	Vector3 _rotateOffset = {0.2f, 0, 0}; // カメラとターゲットの回転の差
 	Player* _target = nullptr;
+
+	int _currentTime = 0;
+	int _attackTime = 5;
+	void Attack(); // 这是从摄像机的方向射出的子弹
 
 public:
 	void Initialize();

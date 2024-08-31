@@ -1,5 +1,30 @@
 #include "CameraController.h"
 
+void CameraController::Attack() {
+	// 攻击计时
+	bool isAttack = false;
+	if (_currentTime <= 0) {
+		_currentTime = _attackTime;
+		isAttack = true;
+	}
+	_currentTime--;
+	// 攻击
+	if (Input::GetInstance()->IsPressMouse(0) && isAttack) {
+		Vector3 offset = {1, 1, 2}; // 调整子弹的出现位置
+
+		Vector3 up = My3dTools::GetDirection_up(_currentQuaternion);
+		Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
+		Vector3 right = My3dTools::GetDirection_right(_currentQuaternion);
+		Vector3 bulletBornPos1 = _pos + up * offset.y + front * offset.z + right * offset.x;
+		Vector3 bulletBornPos2 = _pos + up * offset.y + front * offset.z + right * -offset.x;
+		Vector3 bulletBornRotate = {_rotate.x, _rotate.y, 0};
+		Bullet* bullet1 = BulletManager::AcquireBullet(&_viewProjection, bulletBornPos1, _currentQuaternion, Bullet::tPlayer);
+		bullet1->Fire();
+		Bullet* bullet2 = BulletManager::AcquireBullet(&_viewProjection, bulletBornPos2, _currentQuaternion, Bullet::tPlayer);
+		bullet2->Fire();
+	}
+}
+
 void CameraController::Initialize() {
 	_viewProjection.Initialize();
 	_currentQuaternion = {1, 0, 0, 0};
@@ -11,6 +36,8 @@ void CameraController::Initialize() {
 
 void CameraController::Update() {
 	if (_target != nullptr) {
+		// Attack();
+
 		// 获取目标的位置和旋转信息
 		const WorldTransform& targetWorldTransform = _target->GetWorldTransform();
 

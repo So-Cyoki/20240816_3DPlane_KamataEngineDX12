@@ -19,7 +19,7 @@ private:
 	Vector3 _beforeRotate = {0, 0, 0};
 
 	Sphere _sphere{};
-	float _radius = 5.f;
+	float _radius = 4.f;
 	Vector3 _pos{};
 	Vector3 _rotate{};
 	float _moveMaxLength = ViewProjection::_kFarZ * 0.35f; // 最大移动距离
@@ -34,9 +34,14 @@ private:
 	float _moveGasMax = 0.1f;
 	Vector3 _velocity{};
 	Vector3 _accelerations{};
+	float _hurtVel = 0.5f; // 受伤受到的力
 
 	// 战斗属性
+	float _hp = 0;
+	float _hpMax = 50;
+	float _attack = 1;
 	int _attackTime = 5;
+	float _hurtHp = 1; // 受伤数值
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
@@ -48,8 +53,14 @@ private:
 	void Move();
 	void ArrowMove();
 	void Attack();
-	int _currentTimes[31] = {0};               // 这个用于计时器的使用
-	bool FrameTimeWatch(int frame, int index); // 一开始就会输出一次true
+	void IsCollision();
+	void ToDead();
+
+	bool _isDead = false;
+
+	// 工具
+	int _currentTimes[31] = {0};                    // 这个用于计时器的使用
+	bool FrameTimeWatch_true(int frame, int index); // 一开始就会输出一次true
 
 public:
 	~Player();
@@ -66,8 +77,13 @@ public:
 	void SetVelocity(const Vector3& vel) { _velocity = vel; };
 	const Vector3& GetAccelerations() const { return _accelerations; };
 	const float& GetMoveGasPedal() const { return _moveGasPedal; };
+	const float& GetMoveGasMax() const { return _moveGasMax; };
 	const float& GetRotationSpeed() const { return _rotationSpeed; };
 	const Vector2& GetArrowMove() const { return _arrowMove; };
 	const Vector2& GetArrowMouse() const { return _arrowMouse; };
 	const Quaternion& GetQuaternion() const { return _currentQuaternion; };
+	const float& GetAttackValue() const { return _attack; };
+	const float& GetHp() const { return _hp; };
+	const float& GetHpMax() const { return _hpMax; };
+	void SetHp(const float& hp) { _hp = hp; };
 };

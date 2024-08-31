@@ -6,11 +6,12 @@ void Bullet::Move() {
 }
 
 void Bullet::ToDead() {
-	ParticleManager::ADD_Hurt(_viewProjection, _pos, _currentQuaternion);
+	if (_isHurt)
+		ParticleManager::ADD_Hurt(_viewProjection, _pos, _currentQuaternion);
 	BulletManager::ReleaseBullet(this);
 }
 
-bool Bullet::FrameTimeWatch_false(int frame, int index) {
+bool Bullet::FrameTimeWatch(int frame, int index) {
 	if (_currentTimes[index] > frame) {
 		_currentTimes[index] = 0;
 		return true;
@@ -34,6 +35,7 @@ void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, 
 
 	_type = type;
 	_isDead = false;
+	_isHurt = false;
 	// 必须在初始化的时候就更新world矩阵和碰撞体呀！不然肯定会重复判定的呀！
 	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
 	_worldTransform.TransferMatrix();
@@ -42,7 +44,7 @@ void Bullet::Initalize(ViewProjection* viewProjection, const Vector3& position, 
 
 void Bullet::Update() {
 	// 存活时间限制
-	if (FrameTimeWatch_false(_liftTime, 0))
+	if (FrameTimeWatch(_lifeTime, 0))
 		_isDead = true;
 	// 死亡写在了Manager里面，这样才是最准确的
 	Move();

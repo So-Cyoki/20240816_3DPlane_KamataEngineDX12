@@ -21,19 +21,20 @@ private:
 	Vector3 _pos{};
 	Vector3 _rotate{}; // 虽然还保留在这里，但是实际上已经不使用了，因为去用四元数了
 	Sphere _sphere{};
-	float _radius = 0.1f;
+	float _radius = 0.2f;
 	Vector3 _scale = {0.2f, 0.2f, 0.2f};
 
 	float _speed = 10.f;
-	int _liftTime = 3 * 60; // 最大存活时间
+	int _lifeTime = 3 * 60; // 最大存活时间
 
 	bool _isDead = false;
+	bool _isHurt = false;
 
 	void Move();
 
 	// 工具
-	int _currentTimes[5] = {0};                      // 这个用于计时器的使用
-	bool FrameTimeWatch_false(int frame, int index); // 计时到了才会输出true
+	int _currentTimes[5] = {0}; // 这个用于计时器的使用
+	bool FrameTimeWatch(int frame, int index);
 
 public:
 	inline static enum Type { tPlayer, tEnemy } bulletType;
@@ -50,6 +51,11 @@ public:
 	const Sphere& GetSphere() const { return _sphere; };
 	const bool& GetIsDead() const { return _isDead; };
 	void SetIsDead(const bool& flag) { _isDead = flag; };
+	void SetIsHurt(const bool& flag) {
+		_isHurt = flag;
+		_isDead = flag;
+	};
+	const Quaternion& GetQuaternion() const { return _currentQuaternion; };
 };
 
 class BulletManager {

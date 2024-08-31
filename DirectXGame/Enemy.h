@@ -2,6 +2,7 @@
 #include "Bullet.h"
 #include "Model.h"
 #include "My3DTools.h"
+#include "Particle.h"
 #include "Player.h"
 #include "Quaternion.h"
 #include "ViewProjection.h"
@@ -23,24 +24,31 @@ public:
 	Vector3 _beforeRotate = {0, 0, 0};
 	// 碰撞相关
 	Sphere _sphere{};
-	float _radius = 5.f;
+	float _radius = 6.f;
 	Vector3 _pos{};
 	Vector3 _rotate{};
 	// 物理移动
-	float _speed = 0.01f;
+	float _speed = 0.005f;
 	float _rotateSpeed = 0.001f; //(0~1)用了插值算法
 	float _moveMax = 1.5f;
 	Vector3 _velocity{};
 	Vector3 _accelerations{};
-	Quaternion _randomZ{}; // 随机旋转的Z轴
-	// 战斗属性(还没写相关逻辑)
-	float _hp = 10;
-	float _attack = 1;
+	Quaternion _randomZ{};  // 随机旋转的Z轴
+	float _hurtVel = 0.01f; // 受伤受到的力
+	// 战斗属性
+	float _hp = 0;
+	float _attack = 1; // 这个值没用，玩家受伤数值写在了玩家类中
 	int _attackTime = 20;
 	float _aimingRadian = 15 * std::acosf(-1) / 180; // 和玩家多少夹角时候才射击
 	float _aimingLength = 300;                       // 和玩家多少距离才开始射击
+	int _fleeTime = 5 * 60;                          // 逃跑时间
 
 	Player* _playerObj = nullptr;
+	bool _isHurt = false;
+	bool _isDead = false;
+	int _deadTime = 5 * 60;              // 多久后结束死亡动画（回收敌人）
+	int _deadTime_boom = int(0.5f * 60); // 死亡动画，Boom的频率
+	int _deadTime_boom2 = int(0.2f * 60);
 
 	// 状态：0追击、1偷袭、2环绕、3逃跑、4死亡
 	enum class State { Chase, Raid, Orbit, Flee, Dead };
@@ -53,8 +61,8 @@ public:
 
 	// 状态机
 	// 追击
-	void Enter_Chase();
-	void Exit_Chase();
+	// void Enter_Chase();
+	// void Exit_Chase();
 	void Update_Chase();
 	bool IsExit_Chase();
 	//// 偷袭
@@ -70,8 +78,8 @@ public:
 	//// 逃跑
 	// void Enter_Flee();
 	// void Exit_Flee();
-	// void Update_Flee();
-	// bool IsExit_Flee();
+	void Update_Flee();
+	bool IsExit_Flee();
 	//// 死亡
 	// void Enter_Dead();
 	// void Exit_Dead();
@@ -79,20 +87,24 @@ public:
 	// bool IsExit_Dead();
 
 	// 工具
-	int _currentTimes[31] = {0};                       // 这个用于计时器的使用
-	bool FrameTimeWatch(int frame, int index);         // 一开始就会输出一次true
-	Quaternion RandomZRotation(float maxAngleRadians); // 按照输入的角度，随机一个Z轴的四元数
+	int _currentTimes[31] = {0};                           // 这个用于计时器的使用
+	bool FrameTimeWatch(int frame, int index, bool first); // 计时器：帧时间、编号、首次是否输出true
+	Quaternion RandomZRotation(float maxAngleRadians);     // 按照输入的角度，随机一个Z轴的四元数
 
 public:
 	~Enemy();
 	void Initalize(ViewProjection* viewProjection, const Vector3& position, Player* playerObj);
 	void Update();
 	void Draw();
-	void Fire(); // 调用这个方法来触发敌人
+	void Fire();   // 调用这个方法来触发敌人
+	void ToDead(); // 死亡方法
 
 	const Vector3 GetWorldPosition() const;
 	const Vector3& GetPos() const { return _pos; };
 	const Sphere& GetSphere() const { return _sphere; };
+	const bool& GetIsDead() const { return _isDead; };
+	const float& GetHp() const { return _hp; };
+	void SetHp(const float& hp) { _hp = hp; };
 };
 
 class EnemyManager {
