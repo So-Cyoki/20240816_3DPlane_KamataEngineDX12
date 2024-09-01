@@ -25,7 +25,7 @@ public:
 	Vector3 _beforeRotate = {0, 0, 0};
 	// 碰撞相关
 	Sphere _sphere{};
-	float _radius = 6.f;
+	float _radius = 8.f;
 	Vector3 _pos{};
 	Vector3 _rotate{};
 	// 物理移动
@@ -43,6 +43,7 @@ public:
 	float _aimingRadian = 15 * std::acosf(-1) / 180; // 和玩家多少夹角时候才射击
 	float _aimingLength = 300;                       // 和玩家多少距离才开始射击
 	int _fleeTime = 5 * 60;                          // 逃跑时间
+	int _pMoveTime = 10;                             // 移动粒子效果时间
 
 	Player* _playerObj = nullptr;
 	GameUI* _gameUIObj = nullptr;
@@ -89,7 +90,7 @@ public:
 	// bool IsExit_Dead();
 
 	// 工具
-	int _currentTimes[31] = {0};                           // 这个用于计时器的使用
+	int _currentTimes[10] = {0};                           // 这个用于计时器的使用
 	bool FrameTimeWatch(int frame, int index, bool first); // 计时器：帧时间、编号、首次是否输出true
 	Quaternion RandomZRotation(float maxAngleRadians);     // 按照输入的角度，随机一个Z轴的四元数
 
@@ -111,11 +112,20 @@ public:
 
 class EnemyManager {
 public:
+	inline static bool _isStart = false;
+	inline static Vector3 _startPos = {0, 50, 300};
+	inline static int _enemyMax = 10;
+	inline static int _enemyMin = 2;
+	inline static int _bornTime = 10 * 60;
+
 	inline static std::vector<Enemy*> _updatePool;
 	inline static std::queue<Enemy*> _idlePool;
 
 	static void Updata();
 	static void Draw();
+	static void EnemyBornSystem(ViewProjection* viewProjection, Player* playerObj, GameUI* gameUIObj); // 敌人生成系统
+	inline static int _currentTimes[5] = {0};
+	static bool FrameTimeWatch(int frame, int index, bool first); // 计时器：帧时间、编号、首次是否输出true
 
 	// 获取一个对象，并且初始化
 	static Enemy* AcquireEnemy(ViewProjection* viewProjection, const Vector3& position, Player* playerObj, GameUI* gameUIObj);

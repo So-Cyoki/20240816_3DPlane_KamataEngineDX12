@@ -66,6 +66,11 @@ void Player::Move() {
 		float scale = _moveMaxLength / preWorldPos.Length();
 		_pos *= scale;
 	}
+
+	// 粒子效果
+	if (FrameTimeWatch_true(_pMoveTime, 2)) {
+		// ParticleManager::ADD_Move(_viewProjection, _pos + front * -7, _currentQuaternion);
+	}
 }
 
 void Player::ArrowMove() {
@@ -116,7 +121,7 @@ void Player::IsCollision() {
 	}
 }
 
-void Player::ToDead() {}
+void Player::ToDead() { _hp = 0; }
 
 bool Player::FrameTimeWatch_true(int frame, int index) {
 	if (_currentTimes[index] <= 0) {
@@ -152,10 +157,9 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 void Player::Update() {
 	// 生命检测
 	if (_hp <= 0) {
-		//_isDead = true;
+		_isDead = true;
 	}
 	if (_isDead) {
-		_hp = 0;
 		ToDead();
 	} else {
 		if (!Input::GetInstance()->PushKey(DIK_LSHIFT))

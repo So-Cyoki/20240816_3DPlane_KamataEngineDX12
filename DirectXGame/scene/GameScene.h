@@ -65,10 +65,11 @@ private: // メンバ変数
 	// Obj
 	Skydome* _skydomeObj = nullptr;
 	Player* _playerObj = nullptr;
-	Enemy* _enemyObj = nullptr;
 	EarthBall* _earthBall = nullptr;
 	// UI
 	GameUI* _gameUIObj = nullptr;
+	DeadUI* _deadUIObj = nullptr;
+	StartUI* _startUIObj = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

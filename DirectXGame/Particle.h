@@ -25,6 +25,7 @@ class Particle {
 
 	float _speed = 0.0f;
 	int _lifeTime = 0; // 最大存活时间
+	int _deadTime = 0; // 死亡动画时间
 
 	bool _isDead = false;
 
@@ -39,9 +40,10 @@ class Particle {
 		const float c3 = c1 + 1;
 		return 1 + c3 * powf(t - 1, 3) + c1 * powf(t - 1, 2);
 	};
+	float EaseInSine(float t) { return 1 - cosf((t * acosf(-1)) / 2); };
 
 public:
-	inline static enum Type { tHurt, tBoom, tBoom2 } particleType;
+	inline static enum Type { tHurt, tBoom, tBoom2, tBoom3, tMove } particleType;
 	Type _type = tHurt;
 
 	~Particle() { delete _model; };
@@ -63,6 +65,8 @@ public:
 	static void ADD_Hurt(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate);
 	static void ADD_Boom(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate);
 	static void ADD_Boom2(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate);
+	static void ADD_Boom3(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate);
+	static void ADD_Move(ViewProjection* viewProjection, const Vector3& position, const Quaternion& rotate);
 
 	// 对象池
 	inline static std::vector<Particle*> _updatePool;

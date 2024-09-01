@@ -188,6 +188,9 @@ void GameUI::Initalize(int screenWidth, int screenHeight, Player* playerObj) {
 	Numbers_Initalize();
 	_score = 0;
 	_posScore = {_width * 0.5f, 27};
+	// killPoint
+	_spkillPoint = MyCreate("Sprites/killPoint.png", {_width / 2, _height / 2});
+	_spList.push_back(_spkillPoint);
 }
 
 void GameUI::Update() {
@@ -203,6 +206,17 @@ void GameUI::Update() {
 	float gasScale = realGas / (_playerObj->GetMoveGasMax() * 1.5f); // 油门的比例
 	Vector2 posScale = (_posEndSpeed - _posStartSpeed) * gasScale;
 	_spSpeed->SetPosition(_posStartSpeed + posScale);
+	// KillPoint
+	if (_colorKillPoint.w > 0) {
+		_colorKillPoint.w -= _colorKillPoint_speed;
+		if (_colorKillPoint.w <= 0)
+			_colorKillPoint.w = 0;
+	}
+	if (_scaleKillPoint < _scaleKillPoint_max) {
+		_scaleKillPoint += _scaleKillPoint_speed;
+	}
+	_spkillPoint->SetColor(_colorKillPoint);
+	_spkillPoint->SetSize({_killPointSize.x * _scaleKillPoint, _killPointSize.y * _scaleKillPoint});
 }
 
 void GameUI::Draw() {
@@ -210,4 +224,64 @@ void GameUI::Draw() {
 		it->Draw();
 	Hp_Draw();
 	Score_Draw();
+}
+
+DeadUI::~DeadUI() {
+	delete _spDeadTitle;
+	delete _spRestart;
+}
+
+void DeadUI::Initalize(int screenWidth, int screenHeight) {
+	_width = float(screenWidth), _height = float(screenHeight);
+
+	_textureHandle = TextureManager::Load("Sprites/deadUI.png");
+	_spDeadTitle = Sprite::Create(_textureHandle, _posDeadTitle);
+	_textureHandle = TextureManager::Load("Sprites/restart.png");
+	_spRestart = Sprite::Create(_textureHandle, _posRestart);
+
+	_isRestart = false;
+}
+
+void DeadUI::Update() {
+	if (Input::GetInstance()->PushKey(DIK_SPACE))
+		_isRestart = true;
+
+	_spRestart->SetPosition(_posRestart);
+}
+
+void DeadUI::Draw() {
+	_spDeadTitle->Draw();
+	_spRestart->Draw();
+}
+
+StartUI::~StartUI() {
+	delete _spStart;
+	delete _spStartTitle;
+}
+
+void StartUI::Initalize(int screenWidth, int screenHeight) {
+	_width = float(screenWidth), _height = float(screenHeight);
+
+	_textureHandle = TextureManager::Load("Sprites/startUI.png");
+	_spStartTitle = Sprite::Create(_textureHandle, _posStartTitle);
+	_textureHandle = TextureManager::Load("Sprites/start.png");
+	_spStart = Sprite::Create(_textureHandle, _posStart);
+
+	_isStart = false;
+}
+
+void StartUI::Update() {
+	if (Input::GetInstance()->PushKey(DIK_SPACE))
+		_isStart = true;
+
+	if (_colorStartTitle.w > 0 && _isStart)
+		_colorStartTitle.w -= 0.01f;
+
+	_spStartTitle->SetColor(_colorStartTitle);
+	_spStart->SetPosition(_posStart);
+}
+
+void StartUI::Draw() {
+	_spStartTitle->Draw();
+	_spStart->Draw();
 }

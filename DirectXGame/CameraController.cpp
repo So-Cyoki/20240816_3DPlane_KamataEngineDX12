@@ -30,8 +30,8 @@ void CameraController::Initialize() {
 	_currentQuaternion = {1, 0, 0, 0};
 	_beforeRotate = {0, 0, 0};
 
-	_pos = {0, 20, -170};
-	_rotate = {0.4f, 0, 0};
+	_isStart = false;
+	_isStartAni = false;
 }
 
 void CameraController::Update() {
@@ -51,9 +51,20 @@ void CameraController::Update() {
 		_targetPos = targetWorldTransform.translation_ + targetFront * _posOffset.z + targetUp * _posOffset.y + targetRight * _posOffset.x;
 		_targetRotate = targetWorldTransform.rotation_ + _rotateOffset;
 
-		_pos = _targetPos;
-		_rotate = _targetRotate;
-		//_currentQuaternion = _target->GetQuaternion();
+		if (_isStartAni) {
+			Vector3 dir = _targetPos - _pos;
+			if (dir.Length() > 1) {
+				_pos += dir.Normalize() * _speed_startAni;
+			} else {
+				_isStart = true;
+				_isStartAni = false;
+			}
+		}
+		if (_isStart) {
+			_pos = _targetPos;
+			_rotate = _targetRotate;
+			//_currentQuaternion = _target->GetQuaternion();
+		}
 	}
 
 	// 重新传入摄像机的view矩阵中

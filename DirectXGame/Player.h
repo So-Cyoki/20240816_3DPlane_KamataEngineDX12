@@ -38,10 +38,11 @@ private:
 
 	// 战斗属性
 	float _hp = 0;
-	float _hpMax = 50;
+	float _hpMax = 70;
 	float _attack = 1;
 	int _attackTime = 5;
-	float _hurtHp = 1; // 受伤数值
+	float _hurtHp = 1;  // 受伤数值
+	int _pMoveTime = 5; // 移动粒子效果时间
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
@@ -59,7 +60,7 @@ private:
 	bool _isDead = false;
 
 	// 工具
-	int _currentTimes[31] = {0};                    // 这个用于计时器的使用
+	int _currentTimes[10] = {0};                    // 这个用于计时器的使用
 	bool FrameTimeWatch_true(int frame, int index); // 一开始就会输出一次true
 
 public:
@@ -86,4 +87,5 @@ public:
 	const float& GetHp() const { return _hp; };
 	const float& GetHpMax() const { return _hpMax; };
 	void SetHp(const float& hp) { _hp = hp; };
+	const bool& GetIsDead() const { return _isDead; };
 };

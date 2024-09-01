@@ -6,6 +6,14 @@
 #include "cmath"
 #include "vector"
 
+class UIManager {
+
+	// 没有时间搞那么复杂了，直接在这里通过枚举控制好了
+public:
+	enum class Scene { Start, Loading, Game, Dead };
+	inline static Scene _currentScene = Scene::Start;
+};
+
 class GameUI {
 public:
 	uint32_t _textureHandle = 0;
@@ -20,6 +28,14 @@ public:
 	Sprite* _spSpeed = nullptr;
 	Vector2 _posStartSpeed = {452, 494};
 	Vector2 _posEndSpeed = {409, 404};
+
+	Sprite* _spkillPoint = nullptr;
+	float _colorKillPoint_speed = 0.05f; // 减少Alpha值的速度
+	float _scaleKillPoint_speed = 0.2f;  // 调整大小的速度
+	float _scaleKillPoint_max = 2.5f;
+	float _scaleKillPoint = 1;
+	Vector2 _killPointSize = {22, 22};
+	Vector4 _colorKillPoint = {1, 1, 1, 0};
 
 	int _score = 0;
 	int _huretScore = 10;
@@ -47,4 +63,57 @@ public:
 
 	void HurtScore() { _score += _huretScore; };
 	void DeadScore() { _score += _deadScore; };
+	void AniStart_skillPoint() {
+		_colorKillPoint = {1, 1, 1, 1};
+		_scaleKillPoint = 1;
+	};
+
+	const int& GetScore() const { return _score; };
+	void SetScore(const int& score) { _score = score; };
+	void SetColor_killPoint(const Vector4& color) { _colorKillPoint = color; };
+};
+
+class DeadUI {
+private:
+	uint32_t _textureHandle = 0;
+	float _width = 0;
+	float _height = 0;
+	Sprite* _spDeadTitle = nullptr;
+	Vector2 _posDeadTitle = {0, 0};
+	Sprite* _spRestart = nullptr;
+	Vector2 _posRestart = {342, 559};
+
+	bool _isRestart = false; // 下一个场景
+
+public:
+	~DeadUI();
+	void Initalize(int screenWidth, int screenHeight);
+	void Update();
+	void Draw();
+
+	const bool& GetIsRestart() const { return _isRestart; };
+	void SetIsRestart(const bool& flag) { _isRestart = flag; };
+};
+
+class StartUI {
+private:
+	uint32_t _textureHandle = 0;
+	float _width = 0;
+	float _height = 0;
+	Sprite* _spStartTitle = nullptr;
+	Vector2 _posStartTitle = {0, 0};
+	Vector4 _colorStartTitle = {1, 1, 1, 1};
+	Sprite* _spStart = nullptr;
+	Vector2 _posStart = {399, 589};
+
+	bool _isStart = false; // 下一个场景
+
+public:
+	~StartUI();
+	void Initalize(int screenWidth, int screenHeight);
+	void Update();
+	void Draw();
+
+	const bool& GetIsStart() const { return _isStart; };
+	void SetIsStart(const bool& flag) { _isStart = flag; };
 };

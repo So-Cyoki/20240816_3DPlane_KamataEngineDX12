@@ -39,9 +39,9 @@ void Enemy::Update() {
 	switch (_currentState) {
 	case Enemy::State::Chase:
 		if (IsExit_Chase()) {
-			//_currentState = State::Flee;
+			_currentState = State::Flee;
 		}
-		// Update_Chase();
+		Update_Chase();
 		break;
 	case Enemy::State::Raid:
 		break;
@@ -82,6 +82,12 @@ void Enemy::Update() {
 
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 	_isHurt = false;
+
+	Vector3 front = My3dTools::GetDirection_front(_currentQuaternion);
+	// 粒子效果
+	if (FrameTimeWatch(_pMoveTime, 2, true)) {
+		// ParticleManager::ADD_Move(_viewProjection, _pos + front * -7, _currentQuaternion);
+	}
 }
 
 void Enemy::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
@@ -89,15 +95,25 @@ void Enemy::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
 void Enemy::Fire() { EnemyManager::_updatePool.push_back(this); }
 
 void Enemy::ToDead() {
+	// 物理移动
+	_pos += _velocity;
+	_currentQuaternion.normalize();
+	Quaternion rotate = {1, 0.01f, 0.01f, 0.01f};
+	_currentQuaternion = rotate * _currentQuaternion;
+	_worldTransform.translation_ = _pos;
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 	if (FrameTimeWatch(_deadTime, 2, false)) {
 		_gameUIObj->DeadScore();
+		ParticleManager::ADD_Boom3(_viewProjection, _pos, _currentQuaternion);
 		EnemyManager::ReleaseEnemy(this);
 	} else {
 		if (FrameTimeWatch(_deadTime_boom, 3, true)) {
 			ParticleManager::ADD_Boom(_viewProjection, _pos, _currentQuaternion);
 		}
 		if (FrameTimeWatch(_deadTime_boom2, 4, true)) {
-			ParticleManager::ADD_Hurt(_viewProjection, _pos, _currentQuaternion);
+			ParticleManager::ADD_Boom2(_viewProjection, _pos, _currentQuaternion);
 		}
 	}
 }
@@ -166,10 +182,12 @@ void Enemy::IsCollision() {
 
 			_isHurt = true;
 			_hp -= _playerObj->GetAttackValue();
-			_gameUIObj->HurtScore();
 			// 给一个冲击的力
 			Vector3 front = My3dTools::GetDirection_front(bullet->GetQuaternion());
 			_velocity += front * _hurtVel;
+			// UI
+			_gameUIObj->HurtScore();
+			_gameUIObj->AniStart_skillPoint();
 		}
 	}
 	// Player
@@ -253,6 +271,47 @@ void EnemyManager::Draw() {
 	for (Enemy* it : _updatePool) {
 		it->Draw();
 	}
+}
+
+void EnemyManager::EnemyBornSystem(ViewProjection* viewProjection, Player* playerObj, GameUI* gameUIObj) {
+	if (!_isStart) {
+		Enemy* enemy = nullptr;
+		Vector3 tempV = {40, 0, 0};
+		enemy = AcquireEnemy(viewProjection, _startPos + tempV, playerObj, gameUIObj);
+		enemy->Fire();
+		enemy = AcquireEnemy(viewProjection, _startPos + (tempV * -1), playerObj, gameUIObj);
+		enemy->Fire();
+		_isStart = true;
+	}
+
+	int size = static_cast<int>(_updatePool.size());
+	if (size < _enemyMin) {
+		Vector3 bornPos = My3dTools::GetDirection_front(playerObj->GetQuaternion()) * -300;
+		Enemy* enemy = AcquireEnemy(viewProjection, bornPos, playerObj, gameUIObj);
+		enemy->Fire();
+	}
+	if (size < _enemyMax && FrameTimeWatch(_bornTime, 0, false)) {
+		Vector3 bornPos = My3dTools::GetDirection_front(playerObj->GetQuaternion()) * -300;
+		Enemy* enemy = AcquireEnemy(viewProjection, bornPos, playerObj, gameUIObj);
+		enemy->Fire();
+	}
+}
+
+bool EnemyManager::FrameTimeWatch(int frame, int index, bool first) {
+	if (!first) {
+		if (_currentTimes[index] > frame) {
+			_currentTimes[index] = 0;
+			return true;
+		}
+		_currentTimes[index]++;
+	} else {
+		if (_currentTimes[index] <= 0) {
+			_currentTimes[index] = frame;
+			return true;
+		}
+		_currentTimes[index]--;
+	}
+	return false;
 }
 
 Enemy* EnemyManager::AcquireEnemy(ViewProjection* viewProjection, const Vector3& position, Player* playerObj, GameUI* gameUIObj) {

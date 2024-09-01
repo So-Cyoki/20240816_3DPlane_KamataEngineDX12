@@ -13,7 +13,7 @@ public:
 	Quaternion _currentQuaternion = {1, 0, 0, 0};
 	Vector3 _beforeRotate = {0, 0, 0};
 
-	Vector3 _pos = {0, 20, -170};
+	Vector3 _pos = {0, 20, -20};
 	Vector3 _rotate = {0.4f, 0, 0};
 
 	Vector3 _targetPos{};                 // 目標の位置
@@ -21,6 +21,10 @@ public:
 	Vector3 _posOffset = {0, 4.f, -20.f}; // カメラとターゲットの距離の差
 	Vector3 _rotateOffset = {0.2f, 0, 0}; // カメラとターゲットの回転の差
 	Player* _target = nullptr;
+
+	float _speed_startAni = 1;
+	bool _isStart = false;
+	bool _isStartAni = false;
 
 	int _currentTime = 0;
 	int _attackTime = 5;
@@ -34,4 +38,7 @@ public:
 	const ViewProjection& GetViewProjection() const { return _viewProjection; };
 	const Vector3& GetCameraPos() const { return _pos; };
 	const Vector3& GetCameraRotate() const { return _rotate; };
+	const bool& GetIsStartAni() const { return _isStartAni; };
+	void SetIsStartAni(const bool& flag) { _isStartAni = flag; };
+	const bool& GetIsStart() const { return _isStart; };
 };

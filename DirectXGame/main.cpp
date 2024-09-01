@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
 	win->SetFullscreen(true); // 全屏
-	                          // ShowCursor(false);        // 隐藏鼠标
+	ShowCursor(false);        // 隐藏鼠标
 
 #pragma region 汎用機能初期化
 	// ImGuiの初期化

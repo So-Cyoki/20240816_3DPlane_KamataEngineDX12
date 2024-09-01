@@ -8,9 +8,10 @@ GameScene::~GameScene() {
 	delete _model;
 	delete _cameraConObj;
 	delete _playerObj;
-	delete _enemyObj;
 	delete _skydomeObj;
 	delete _gameUIObj;
+	delete _deadUIObj;
+	delete _startUIObj;
 	for (Bullet* it : BulletManager::_updatePool_player)
 		delete it;
 	BulletManager::_updatePool_player.clear();
@@ -40,7 +41,7 @@ void GameScene::Initialize() {
 	_skydomeObj = new Skydome();
 	_skydomeObj->Initialize(&_viewProjection);
 	_playerObj = new Player();
-	Vector3 playerPos = {0, 0, -200};
+	Vector3 playerPos = {0, 50, -200};
 	_playerObj->Initalize(&_viewProjection, playerPos);
 	_cameraConObj->SetTarget(_playerObj);
 	_earthBall = new EarthBall;
@@ -49,20 +50,10 @@ void GameScene::Initialize() {
 	// UI
 	_gameUIObj = new GameUI();
 	_gameUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight, _playerObj);
-
-	// Enemy
-	_enemyObj = new Enemy();
-	Vector3 enemyPos = {0, 0, -100};
-	_enemyObj->Initalize(&_viewProjection, enemyPos, _playerObj, _gameUIObj);
-	const int newEnemy = 4;
-	for (int i = 0; i < newEnemy; i++) {
-		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {20.f * i, 20, -20}, _playerObj, _gameUIObj);
-		enemy->Fire();
-	}
-	for (int i = 0; i < newEnemy; i++) {
-		Enemy* enemy = EnemyManager::AcquireEnemy(&_viewProjection, {-20.f * i, 20, -20}, _playerObj, _gameUIObj);
-		enemy->Fire();
-	}
+	_deadUIObj = new DeadUI();
+	_deadUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight);
+	_startUIObj = new StartUI();
+	_startUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
 	// 预先生成并存放子弹，为了优化
 	// for (int i = 0; i < 2000; i++) {
@@ -76,39 +67,120 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	// CameraController
-	_cameraConObj->Update();
-	_viewProjection.matView = _cameraConObj->GetViewProjection().matView;
-	_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
-	_viewProjection.TransferMatrix();
-	// Obj
-	_skydomeObj->Update();
-	_playerObj->Update();
-	_enemyObj->Update();
-	_earthBall->Update();
-	EnemyManager::Updata();
-	BulletManager::Updata();
-	ParticleManager::Updata();
-	// UI
-	_gameUIObj->Update();
+	switch (UIManager::_currentScene) {
+	case UIManager::Scene::Loading: {
+		// Player
+		Vector3 playerPos = {0, 0, -200};
+		_playerObj->Initalize(&_viewProjection, playerPos);
+		EnemyManager::_isStart = false;
+		// Enemy
+		std::vector<Enemy*> tempEnemy;
+		for (Enemy* it : EnemyManager::_updatePool)
+			tempEnemy.push_back(it);
+		for (Enemy* it : tempEnemy)
+			EnemyManager::ReleaseEnemy(it);
+		EnemyManager::_updatePool.clear();
+		tempEnemy.clear();
+		// Bullet
+		std::vector<Bullet*> tempBullet;
+		for (Bullet* it : BulletManager::_updatePool_player)
+			tempBullet.push_back(it);
+		for (Bullet* it : BulletManager::_updatePool_enemy)
+			tempBullet.push_back(it);
+		for (Bullet* it : tempBullet)
+			BulletManager::ReleaseBullet(it);
+		BulletManager::_updatePool_player.clear();
+		BulletManager::_updatePool_enemy.clear();
+		tempBullet.clear();
+		// Particle
+		std::vector<Particle*> tempParticle;
+		for (Particle* it : ParticleManager::_updatePool)
+			tempParticle.push_back(it);
+		for (Particle* it : tempParticle)
+			ParticleManager::ReleaseParticle(it);
+		ParticleManager::_updatePool.clear();
+		tempParticle.clear();
+		// UI
+		_gameUIObj->SetScore(0);
+		_deadUIObj->SetIsRestart(false);
+		_startUIObj->SetIsStart(false);
+		_gameUIObj->SetColor_killPoint({1, 1, 1, 0});
+		// Next
+		UIManager::_currentScene = UIManager::Scene::Game;
+		break;
+	}
+	case UIManager::Scene::Start: {
+		// CameraController
+		_cameraConObj->Update();
+		_viewProjection.matView = _cameraConObj->GetViewProjection().matView;
+		_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
+		_viewProjection.TransferMatrix();
+		// Obj
+		_skydomeObj->Update();
+		_earthBall->Update();
+		// UI
+		_startUIObj->Update();
+		// Next
+		if (_startUIObj->GetIsStart()) {
+			_cameraConObj->SetIsStartAni(true);
+			if (_cameraConObj->GetIsStart())
+				UIManager::_currentScene = UIManager::Scene::Loading;
+		}
+		break;
+	}
+	case UIManager::Scene::Game: {
+		// CameraController
+		_cameraConObj->Update();
+		_viewProjection.matView = _cameraConObj->GetViewProjection().matView;
+		_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
+		_viewProjection.TransferMatrix();
+		// Obj
+		_skydomeObj->Update();
+		_playerObj->Update();
+		_earthBall->Update();
+		EnemyManager::EnemyBornSystem(&_viewProjection, _playerObj, _gameUIObj);
+		EnemyManager::Updata();
+		BulletManager::Updata();
+		ParticleManager::Updata();
+		// UI
+		_gameUIObj->Update();
+		// Next
+		if (_playerObj->GetIsDead())
+			UIManager::_currentScene = UIManager::Scene::Dead;
+		break;
+	}
+	case UIManager::Scene::Dead: {
+		// CameraController
+		_cameraConObj->Update();
+		_viewProjection.matView = _cameraConObj->GetViewProjection().matView;
+		_viewProjection.matProjection = _cameraConObj->GetViewProjection().matProjection;
+		_viewProjection.TransferMatrix();
+		// Obj
+		_skydomeObj->Update();
+		_earthBall->Update();
+		EnemyManager::Updata();
+		BulletManager::Updata();
+		ParticleManager::Updata();
+		// UI
+		_deadUIObj->Update();
+		// Next
+		if (_deadUIObj->GetIsRestart())
+			UIManager::_currentScene = UIManager::Scene::Loading;
+		break;
+	}
+	}
 
 #ifdef _DEBUG
-	// Collision
-	bool isCollision = My3dTools::IsCollision(_playerObj->GetSphere(), _enemyObj->GetSphere());
 	// DebugText
 	ImGui::Begin("DeBug Window");
 	// ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
 	// ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
 	ImGui::DragFloat3("Player Translate", (float*)&_playerObj->GetPos(), 0.01f);
 	ImGui::DragFloat3("Player Rotate", (float*)&_playerObj->GetRotate(), 0.01f);
-	ImGui::DragFloat3("Enemy Translate", (float*)&_enemyObj->GetPos(), 0.01f);
-	// ImGui::DragFloat3("Enemy Rotate", (float*)&_enemyObj->GetRotate(), 0.01f);
-	ImGui::DragFloat4("Enemy Quaternion", (float*)&_enemyObj->_currentQuaternion, 0.01f);
-	ImGui::Text("EnemyHp = %f", _enemyObj->GetHp());
+	ImGui::Text("Enemy Value = %d", EnemyManager::_updatePool.size());
 	ImGui::Spacing();
 	ImGui::Separator();
 	ImGui::Spacing();
-	ImGui::Text("IsCollision %s", isCollision ? "true" : "false");
 	ImGui::Text("Player Acc (%f,%f,%f)", _playerObj->GetAccelerations().x, _playerObj->GetAccelerations().y, _playerObj->GetAccelerations().z);
 	ImGui::Text("Player Vel (%f,%f,%f)", _playerObj->GetVelocity().x, _playerObj->GetVelocity().y, _playerObj->GetVelocity().z);
 	ImGui::Text("Player GasVel %f", _playerObj->GetMoveGasPedal());
@@ -156,7 +228,6 @@ void GameScene::Draw() {
 	_skydomeObj->Draw();
 	_earthBall->Draw();
 	_playerObj->Draw();
-	_enemyObj->Draw();
 	EnemyManager::Draw();
 	BulletManager::Draw();
 	ParticleManager::Draw();
@@ -173,7 +244,17 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	_gameUIObj->Draw();
+	switch (UIManager::_currentScene) {
+	case UIManager::Scene::Start:
+		_startUIObj->Draw();
+		break;
+	case UIManager::Scene::Game:
+		_gameUIObj->Draw();
+		break;
+	case UIManager::Scene::Dead:
+		_deadUIObj->Draw();
+		break;
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
