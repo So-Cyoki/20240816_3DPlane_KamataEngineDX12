@@ -53,7 +53,6 @@ public:
 	void Hp_Initalize();
 	void Hp_Draw();
 	void Numbers_Initalize();
-	void Score_Draw();
 
 	Sprite* MyCreate(const std::string& fileName, Vector2 pos);
 
@@ -62,6 +61,8 @@ public:
 	void Initalize(int screenWidth, int screenHeight, Player* playerObj);
 	void Update();
 	void Draw();
+
+	void Score_Draw(Vector2 startPos);
 
 	void HurtScore() { _score += _huretScore; };
 	void DeadScore() { _score += _deadScore; };
@@ -92,7 +93,7 @@ private:
 	Sprite* _spDeadTitle = nullptr;
 	Vector2 _posDeadTitle = {0, 0};
 	Sprite* _spRestart = nullptr;
-	Vector2 _posRestart = {342, 559};
+	Vector2 _posRestart = {381, 568};
 
 	bool _isRestart = false; // 下一个场景
 

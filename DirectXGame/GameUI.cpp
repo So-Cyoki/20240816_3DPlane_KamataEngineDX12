@@ -115,7 +115,7 @@ void GameUI::Numbers_Initalize() {
 	_spNumbers[9]->SetSize(size);
 }
 
-void GameUI::Score_Draw() {
+void GameUI::Score_Draw(Vector2 pos) {
 	// 将每一位数字都拆开并存放
 	_scoreDigits.clear();
 	int temp = _score;
@@ -129,14 +129,14 @@ void GameUI::Score_Draw() {
 	// 画图
 	if (_scoreDigits.size() == 0) {
 		_spNumbers[0]->SetTextureHandle(_textureNumbers[0]);
-		_spNumbers[0]->SetPosition({_posScore.x - _scoreSize.x * _scoreSizeScale * 0.5f, _posScore.y});
+		_spNumbers[0]->SetPosition({pos.x - _scoreSize.x * _scoreSizeScale * 0.5f, pos.y});
 		_spNumbers[0]->Draw();
 	} else {
 		int numDigit = 0;   // 当前显示到第几位
 		bool isMax = false; // 是否超过所有可以显示的位数了
 		for (int digit : _scoreDigits) {
 			_spNumbers[numDigit]->SetTextureHandle(_textureNumbers[digit]);
-			Vector2 startPos = {_posScore.x - (_scoreDigits.size() * 0.5f * _scoreNextLength), _posScore.y};
+			Vector2 startPos = {pos.x - (_scoreDigits.size() * 0.5f * _scoreNextLength), pos.y};
 			_spNumbers[numDigit]->SetPosition({startPos.x + _scoreNextLength * numDigit, startPos.y});
 			_spNumbers[numDigit]->Draw();
 			numDigit++;
@@ -148,7 +148,7 @@ void GameUI::Score_Draw() {
 		if (isMax) {
 			for (int i = 0; i < 10; i++) {
 				_spNumbers[i]->SetTextureHandle(_textureNumbers[9]);
-				Vector2 startPos = {_posScore.x - (10 * 0.5f * _scoreNextLength), _posScore.y};
+				Vector2 startPos = {pos.x - (10 * 0.5f * _scoreNextLength), pos.y};
 				_spNumbers[i]->SetPosition({startPos.x + _scoreNextLength * i, startPos.y});
 				_spNumbers[i]->Draw();
 			}
@@ -228,7 +228,7 @@ void GameUI::Draw() {
 	for (Sprite* it : _spList)
 		it->Draw();
 	Hp_Draw();
-	Score_Draw();
+	Score_Draw(_posScore);
 }
 
 DeadUI::~DeadUI() {
@@ -283,6 +283,7 @@ void StartUI::Update() {
 		_colorStartTitle.w -= 0.01f;
 
 	_spStartTitle->SetColor(_colorStartTitle);
+	_spStart->SetColor(_colorStartTitle);
 	_spStart->SetPosition(_posStart);
 }
 

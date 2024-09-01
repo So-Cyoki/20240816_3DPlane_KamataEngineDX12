@@ -121,7 +121,21 @@ void Player::IsCollision() {
 	}
 }
 
-void Player::ToDead() { _hp = 0; }
+void Player::ToDead() {
+	_hp = 0;
+	_pos += _velocity;
+	Quaternion rotate = {1, 0.01f, 0.01f, 0.01f};
+	_currentQuaternion = rotate * _currentQuaternion;
+
+	_worldTransform.translation_ = _pos;
+	_worldTransform.rotation_ = _rotate;
+	_currentQuaternion.normalize();
+	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
+	_worldTransform.TransferMatrix();
+
+	if (FrameTimeWatch_true(_pDeadTime, 3))
+		ParticleManager::ADD_Boom(_viewProjection, _pos, _currentQuaternion);
+}
 
 bool Player::FrameTimeWatch_true(int frame, int index) {
 	if (_currentTimes[index] <= 0) {

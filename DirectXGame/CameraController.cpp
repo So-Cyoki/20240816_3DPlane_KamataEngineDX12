@@ -10,7 +10,7 @@ void CameraController::Initialize() {
 }
 
 void CameraController::Update() {
-	if (_target != nullptr) {
+	if (_target != nullptr && !_target->GetIsDead()) {
 		// 获取目标的位置和旋转信息
 		const WorldTransform& targetWorldTransform = _target->GetWorldTransform();
 

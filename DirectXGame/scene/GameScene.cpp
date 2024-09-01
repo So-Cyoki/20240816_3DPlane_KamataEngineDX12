@@ -161,6 +161,7 @@ void GameScene::Update() {
 		// Obj
 		_skydomeObj->Update();
 		_earthBall->Update();
+		_playerObj->Update();
 		EnemyManager::Updata();
 		BulletManager::Updata();
 		ParticleManager::Updata();
@@ -258,6 +259,7 @@ void GameScene::Draw() {
 		break;
 	case UIManager::Scene::Dead:
 		_deadUIObj->Draw();
+		_gameUIObj->Score_Draw({640, 449});
 		break;
 	}
 

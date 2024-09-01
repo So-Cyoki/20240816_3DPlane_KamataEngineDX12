@@ -41,8 +41,9 @@ private:
 	float _hpMax = 70;
 	float _attack = 1;
 	int _attackTime = 5;
-	float _hurtHp = 1;  // 受伤数值
-	int _pMoveTime = 5; // 移动粒子效果时间
+	float _hurtHp = 1;   // 受伤数值
+	int _pMoveTime = 5;  // 移动粒子效果时间
+	int _pDeadTime = 30; // 死亡粒子效果时间
 
 	// 瞄准点
 	float _screenWidth = float(WinApp::kWindowWidth), _screenHeight = float(WinApp::kWindowHeight);
