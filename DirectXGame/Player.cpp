@@ -57,13 +57,9 @@ void Player::Move() {
 	_velocity.y = std ::clamp(_velocity.y, -_moveMax, _moveMax);
 	_velocity.z = std ::clamp(_velocity.z, -_moveMax, _moveMax);
 
-	Vector3 preWorldPos = GetWorldPosition();
-	if (_moveMaxLength > preWorldPos.Length()) {
-		// 位置移动
-		_pos += _velocity;
-	} else {
-		// 最大范围限制
-		float scale = _moveMaxLength / preWorldPos.Length();
+	_pos += _velocity;
+	if (_moveMaxLength < _pos.Length()) {
+		float scale = _moveMaxLength / _pos.Length();
 		_pos *= scale;
 	}
 
