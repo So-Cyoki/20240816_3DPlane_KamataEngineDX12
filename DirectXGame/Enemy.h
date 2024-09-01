@@ -25,7 +25,7 @@ public:
 	Vector3 _beforeRotate = {0, 0, 0};
 	// 碰撞相关
 	Sphere _sphere{};
-	float _radius = 8.f;
+	float _radius = 12.f;
 	Vector3 _pos{};
 	Vector3 _rotate{};
 	// 物理移动
@@ -38,6 +38,7 @@ public:
 	float _hurtVel = 0.01f; // 受伤受到的力
 	// 战斗属性
 	float _hp = 0;
+	float _hpMax = 15;
 	float _attack = 1; // 这个值没用，玩家受伤数值写在了玩家类中
 	int _attackTime = 20;
 	float _aimingRadian = 15 * std::acosf(-1) / 180; // 和玩家多少夹角时候才射击
@@ -116,7 +117,7 @@ class EnemyManager {
 public:
 	inline static bool _isStart = false;
 	inline static Vector3 _startPos = {0, 50, 300};
-	inline static int _enemyMax = 10;
+	inline static int _enemyMax = 16;
 	inline static int _enemyMin = 2;
 	inline static int _bornTime = 10 * 60;
 

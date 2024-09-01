@@ -72,7 +72,7 @@ void Particle::Initalize(ViewProjection* viewProjection, const Vector3& position
 
 	switch (_type) {
 	case Particle::tHurt: {
-		float scale = 0.6f;
+		float scale = 1.f;
 		_targetScale = {scale, scale, scale};
 		_speed = 0.5f;
 		_lifeTime = 1 * 60;

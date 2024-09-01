@@ -17,7 +17,7 @@ void Enemy::Initalize(ViewProjection* viewProjection, const Vector3& position, P
 	_isHurt = false;
 	_isDead = false;
 
-	_hp = 20;
+	_hp = _hpMax;
 
 	_velocity = {0, 0, 0};
 	_accelerations = {0, 0, 0};
@@ -39,7 +39,7 @@ void Enemy::Update() {
 	switch (_currentState) {
 	case Enemy::State::Chase:
 		if (IsExit_Chase()) {
-			_currentState = State::Flee;
+			//_currentState = State::Flee;
 		}
 		Update_Chase();
 		break;
@@ -296,17 +296,6 @@ void EnemyManager::EnemyBornSystem(ViewProjection* viewProjection, Player* playe
 	if (size < _enemyMax && FrameTimeWatch(_bornTime, 0, false)) {
 		Vector3 bornPos = My3dTools::GetDirection_front(playerObj->GetQuaternion()) * -300;
 		Enemy* enemy = AcquireEnemy(viewProjection, bornPos, playerObj, gameUIObj);
-		enemy->Fire();
-	}
-	if (size <= 0) {
-		Enemy* enemy = nullptr;
-		Vector3 tempV = {40, 0, 0};
-		Vector3 bornPos = My3dTools::GetDirection_front(playerObj->GetQuaternion()) * -300;
-		enemy = AcquireEnemy(viewProjection, bornPos, playerObj, gameUIObj);
-		enemy->Fire();
-		enemy = AcquireEnemy(viewProjection, bornPos + tempV, playerObj, gameUIObj);
-		enemy->Fire();
-		enemy = AcquireEnemy(viewProjection, bornPos + (tempV * -1), playerObj, gameUIObj);
 		enemy->Fire();
 	}
 }

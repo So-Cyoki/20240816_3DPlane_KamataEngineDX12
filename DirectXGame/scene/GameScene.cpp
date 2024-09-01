@@ -55,14 +55,14 @@ void GameScene::Initialize() {
 	_startUIObj->Initalize(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
 	// 预先生成并存放子弹，为了优化
-	// for (int i = 0; i < 2000; i++) {
-	//	Bullet* bullet = new Bullet();
-	//	BulletManager::_idlePool.push(bullet);
-	//}
-	// for (int i = 0; i < 5000; i++) {
-	//	Particle* par = new Particle();
-	//	ParticleManager::_idlePool.push(par);
-	//}
+	for (int i = 0; i < 2000; i++) {
+		Bullet* bullet = new Bullet();
+		BulletManager::_idlePool.push(bullet);
+	}
+	for (int i = 0; i < 5000; i++) {
+		Particle* par = new Particle();
+		ParticleManager::_idlePool.push(par);
+	}
 }
 
 void GameScene::Update() {

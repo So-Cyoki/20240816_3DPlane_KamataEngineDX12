@@ -19,7 +19,7 @@ private:
 	Vector3 _beforeRotate = {0, 0, 0};
 
 	Sphere _sphere{};
-	float _radius = 4.f;
+	float _radius = 8.f;
 	Vector3 _pos{};
 	Vector3 _rotate{};
 	float _moveMaxLength = ViewProjection::_kFarZ * 0.35f; // 最大移动距离
