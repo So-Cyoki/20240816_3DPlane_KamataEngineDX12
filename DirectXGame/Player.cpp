@@ -149,7 +149,6 @@ bool Player::FrameTimeWatch_true(int frame, int index) {
 Player::~Player() { delete _model; }
 
 void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) {
-	_model = Model::CreateFromOBJ("Enemy", true);
 	_viewProjection = viewProjection;
 	_worldTransform.Initialize();
 	_worldTransform.translation_ = position;

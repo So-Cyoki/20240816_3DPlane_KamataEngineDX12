@@ -14,7 +14,7 @@ private:
 	// 基础属性
 	WorldTransform _worldTransform;
 	ViewProjection* _viewProjection = nullptr;
-	Model* _model = nullptr;
+	Model* _model = Model::CreateFromOBJ("Enemy2", true);
 	Quaternion _currentQuaternion = {1, 0, 0, 0}; // 用来计算出四元数，保证旋转是完全没问题的
 	Vector3 _beforeRotate = {0, 0, 0};
 

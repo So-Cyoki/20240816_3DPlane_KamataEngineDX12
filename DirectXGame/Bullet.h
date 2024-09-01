@@ -15,17 +15,19 @@ private:
 	WorldTransform _worldTransform;
 	ViewProjection* _viewProjection = nullptr;
 	Model* _model = Model::CreateFromOBJ("Bullet", true);
+	uint32_t _textureHandle1 = TextureManager::Load("Bullet/Bullet.png");
+	uint32_t _textureHandle2 = TextureManager::Load("Bullet/Bullet2.png");
 	Quaternion _currentQuaternion = {1, 0, 0, 0}; // 用来计算出四元数，保证旋转是完全没问题的
 	Vector3 _beforeRotate = {0, 0, 0};
 
 	Vector3 _pos{};
 	Vector3 _rotate{}; // 虽然还保留在这里，但是实际上已经不使用了，因为去用四元数了
 	Sphere _sphere{};
-	float _radius = 0.2f;
-	Vector3 _scale = {0.2f, 0.2f, 0.2f};
+	float _radius = 0.3f;
+	Vector3 _scale = {0.4f, 0.4f, 0.4f};
 
 	float _speed = 10.f;
-	int _lifeTime = 3 * 60; // 最大存活时间
+	int _lifeTime = 2 * 60; // 最大存活时间
 
 	bool _isDead = false;
 	bool _isHurt = false;

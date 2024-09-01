@@ -62,7 +62,16 @@ void Bullet::Update() {
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
 }
 
-void Bullet::Draw() { _model->Draw(_worldTransform, *_viewProjection); }
+void Bullet::Draw() {
+	switch (_type) {
+	case Bullet::tPlayer:
+		_model->Draw(_worldTransform, *_viewProjection, _textureHandle2);
+		break;
+	case Bullet::tEnemy:
+		_model->Draw(_worldTransform, *_viewProjection, _textureHandle1);
+		break;
+	}
+}
 
 void Bullet::Fire() {
 	switch (_type) {
