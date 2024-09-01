@@ -38,7 +38,7 @@ private:
 
 	// 战斗属性
 	float _hp = 0;
-	float _hpMax = 70;
+	float _hpMax = 1;
 	float _attack = 1;
 	int _attackTime = 5;
 	float _hurtHp = 1;  // 受伤数值

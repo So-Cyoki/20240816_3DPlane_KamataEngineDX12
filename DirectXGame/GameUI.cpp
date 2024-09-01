@@ -76,7 +76,7 @@ void GameUI::Hp_Draw() {
 	} else if (hp >= hpMax * 0.3f) {
 		_spHps[7]->Draw();
 		_spHps[8]->Draw();
-	} else if (hp >= hpMax * 0.2f) {
+	} else if (hp > 0) {
 		_spHps[8]->Draw();
 	}
 }

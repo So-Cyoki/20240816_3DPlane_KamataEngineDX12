@@ -29,6 +29,8 @@ void CameraController::Initialize() {
 	_viewProjection.Initialize();
 	_currentQuaternion = {1, 0, 0, 0};
 	_beforeRotate = {0, 0, 0};
+	_targetPos = {0, 0, 0};
+	_targetRotate = {0, 0, 0};
 
 	_isStart = false;
 	_isStartAni = false;

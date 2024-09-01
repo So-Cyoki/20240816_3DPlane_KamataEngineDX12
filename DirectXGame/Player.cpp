@@ -140,11 +140,15 @@ void Player::Initalize(ViewProjection* viewProjection, const Vector3& position) 
 	_worldTransform.Initialize();
 	_worldTransform.translation_ = position;
 	_pos = position;
+	_rotate = {0, 0, 0};
 	_currentQuaternion = {1, 0, 0, 0};
 	_beforeRotate = {0, 0, 0};
 
 	_velocity = {0, 0, 0};
 	_accelerations = {0, 0, 0};
+	_moveGasPedal = 0;
+	_arrowMove = _screenPoint;
+	_arrowMouse = _screenPoint;
 
 	_isDead = false;
 	_hp = _hpMax;

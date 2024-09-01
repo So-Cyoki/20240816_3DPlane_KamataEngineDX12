@@ -41,8 +41,7 @@ void GameScene::Initialize() {
 	_skydomeObj = new Skydome();
 	_skydomeObj->Initialize(&_viewProjection);
 	_playerObj = new Player();
-	Vector3 playerPos = {0, 50, -200};
-	_playerObj->Initalize(&_viewProjection, playerPos);
+	_playerObj->Initalize(&_viewProjection, _playerBornPos);
 	_cameraConObj->SetTarget(_playerObj);
 	_earthBall = new EarthBall;
 	_earthBall->Initialize(&_viewProjection, _playerObj);
@@ -69,9 +68,11 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	switch (UIManager::_currentScene) {
 	case UIManager::Scene::Loading: {
+		// Camera
+		_cameraConObj->Initialize();
+		_cameraConObj->SetIsStartAni(true);
 		// Player
-		Vector3 playerPos = {0, 0, -200};
-		_playerObj->Initalize(&_viewProjection, playerPos);
+		_playerObj->Initalize(&_viewProjection, _playerBornPos);
 		EnemyManager::_isStart = false;
 		// Enemy
 		std::vector<Enemy*> tempEnemy;
@@ -137,7 +138,8 @@ void GameScene::Update() {
 		_viewProjection.TransferMatrix();
 		// Obj
 		_skydomeObj->Update();
-		_playerObj->Update();
+		if (_cameraConObj->GetIsStart())
+			_playerObj->Update();
 		_earthBall->Update();
 		EnemyManager::EnemyBornSystem(&_viewProjection, _playerObj, _gameUIObj);
 		EnemyManager::Updata();
@@ -165,8 +167,11 @@ void GameScene::Update() {
 		// UI
 		_deadUIObj->Update();
 		// Next
-		if (_deadUIObj->GetIsRestart())
+		if (_deadUIObj->GetIsRestart()) {
+			_cameraConObj->SetCameraPos(_playerBornPos);
+			_cameraConObj->SetCameraRotate({0.4f, 0, 0});
 			UIManager::_currentScene = UIManager::Scene::Loading;
+		}
 		break;
 	}
 	}
@@ -174,7 +179,7 @@ void GameScene::Update() {
 #ifdef _DEBUG
 	// DebugText
 	ImGui::Begin("DeBug Window");
-	// ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
+	ImGui::DragFloat3("Camera Translate", (float*)&_cameraConObj->GetCameraPos(), 0.01f);
 	// ImGui::DragFloat3("Camera Rotate", (float*)&_cameraConObj->GetCameraRotate(), 0.01f);
 	ImGui::DragFloat3("Player Translate", (float*)&_playerObj->GetPos(), 0.01f);
 	ImGui::DragFloat3("Player Rotate", (float*)&_playerObj->GetRotate(), 0.01f);
