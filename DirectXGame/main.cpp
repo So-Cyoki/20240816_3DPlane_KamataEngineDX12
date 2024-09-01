@@ -20,7 +20,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"Alien_Warplane_3D");
+	win->CreateGameWindow(L"宇宙戦機(Alien_Warplane_3D)");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
