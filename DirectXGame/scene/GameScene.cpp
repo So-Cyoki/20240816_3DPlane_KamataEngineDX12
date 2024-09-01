@@ -169,7 +169,6 @@ void GameScene::Update() {
 		// Next
 		if (_deadUIObj->GetIsRestart()) {
 			_cameraConObj->SetCameraPos(_playerBornPos);
-			_cameraConObj->SetCameraRotate({0.4f, 0, 0});
 			UIManager::_currentScene = UIManager::Scene::Loading;
 		}
 		break;

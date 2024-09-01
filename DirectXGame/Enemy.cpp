@@ -298,6 +298,17 @@ void EnemyManager::EnemyBornSystem(ViewProjection* viewProjection, Player* playe
 		Enemy* enemy = AcquireEnemy(viewProjection, bornPos, playerObj, gameUIObj);
 		enemy->Fire();
 	}
+	if (size <= 0) {
+		Enemy* enemy = nullptr;
+		Vector3 tempV = {40, 0, 0};
+		Vector3 bornPos = My3dTools::GetDirection_front(playerObj->GetQuaternion()) * -300;
+		enemy = AcquireEnemy(viewProjection, bornPos, playerObj, gameUIObj);
+		enemy->Fire();
+		enemy = AcquireEnemy(viewProjection, bornPos + tempV, playerObj, gameUIObj);
+		enemy->Fire();
+		enemy = AcquireEnemy(viewProjection, bornPos + (tempV * -1), playerObj, gameUIObj);
+		enemy->Fire();
+	}
 }
 
 bool EnemyManager::FrameTimeWatch(int frame, int index, bool first) {

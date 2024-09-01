@@ -67,8 +67,6 @@ private: // メンバ変数
 	Player* _playerObj = nullptr;
 	EarthBall* _earthBall = nullptr;
 	Vector3 _playerBornPos = {0, 50, -200};
-	Vector3 _cameraConBornPos = {0, 20, -20};
-	Vector3 _cameraConBornRotate = {0.4f, 0, 0};
 	// UI
 	GameUI* _gameUIObj = nullptr;
 	DeadUI* _deadUIObj = nullptr;
