@@ -2,8 +2,8 @@
 
 void EarthBall::IsCollision() {
 	// Player
-	bool IsPlayer = My3dTools::IsCollision(_sphere, _playerObj->GetSphere());
-	if (IsPlayer) {
+	bool isPlayer = My3dTools::IsCollision(_sphere, _playerObj->GetSphere());
+	if (isPlayer) {
 		Vector3 vel = _playerObj->GetVelocity();
 		vel *= -1;
 		_playerObj->SetVelocity(vel);
@@ -17,6 +17,14 @@ void EarthBall::IsCollision() {
 		if (My3dTools::IsCollision(it->GetSphere(), GetSphere()))
 			it->SetIsDead(true);
 	}
+	// Enemy
+	// for (Enemy* it : EnemyManager::_updatePool) {
+	//	if (My3dTools::IsCollision(_sphere, it->GetSphere())) {
+	//		Vector3 vel = it->GetVelocity();
+	//		vel *= -5;
+	//		it->SetVelocity(vel);
+	//	}
+	//}
 }
 
 EarthBall::~EarthBall() { delete _model; }

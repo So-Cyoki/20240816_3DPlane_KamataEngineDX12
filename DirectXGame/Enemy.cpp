@@ -104,6 +104,9 @@ void Enemy::ToDead() {
 	_worldTransform.matWorld_ = Matrix4x4::MakeAffineMatrix(_worldTransform.scale_, _currentQuaternion, _worldTransform.translation_);
 	_worldTransform.TransferMatrix();
 	_sphere = My3dTools::GetSphere(_radius, GetWorldPosition());
+	// UI
+	_gameUIObj->AniStart_help();
+	// Particle
 	if (FrameTimeWatch(_deadTime, 2, false)) {
 		_gameUIObj->DeadScore();
 		ParticleManager::ADD_Boom3(_viewProjection, _pos, _currentQuaternion);

@@ -1,5 +1,6 @@
 #pragma once
 #include "Bullet.h"
+#include "Enemy.h"
 #include "Model.h"
 #include "My3DTools.h"
 #include "Player.h"

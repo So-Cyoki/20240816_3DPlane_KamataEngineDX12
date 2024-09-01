@@ -191,6 +191,9 @@ void GameUI::Initalize(int screenWidth, int screenHeight, Player* playerObj) {
 	// killPoint
 	_spkillPoint = MyCreate("Sprites/killPoint.png", {_width / 2, _height / 2});
 	_spList.push_back(_spkillPoint);
+	// Help
+	_spHelp = MyCreate("Sprites/help.png", {_width / 2, _height / 2});
+	_spList.push_back(_spHelp);
 }
 
 void GameUI::Update() {
@@ -217,6 +220,8 @@ void GameUI::Update() {
 	}
 	_spkillPoint->SetColor(_colorKillPoint);
 	_spkillPoint->SetSize({_killPointSize.x * _scaleKillPoint, _killPointSize.y * _scaleKillPoint});
+	// Help
+	_spHelp->SetColor(_colorHelp);
 }
 
 void GameUI::Draw() {

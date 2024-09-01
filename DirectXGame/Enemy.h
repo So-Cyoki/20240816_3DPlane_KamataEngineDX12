@@ -108,6 +108,8 @@ public:
 	const bool& GetIsDead() const { return _isDead; };
 	const float& GetHp() const { return _hp; };
 	void SetHp(const float& hp) { _hp = hp; };
+	const Vector3& GetVelocity() const { return _velocity; };
+	void SetVelocity(const Vector3& vel) { _velocity = vel; };
 };
 
 class EnemyManager {

@@ -28,6 +28,8 @@ public:
 	Sprite* _spSpeed = nullptr;
 	Vector2 _posStartSpeed = {452, 494};
 	Vector2 _posEndSpeed = {409, 404};
+	Sprite* _spHelp = nullptr;
+	Vector4 _colorHelp = {1, 1, 1, 1};
 
 	Sprite* _spkillPoint = nullptr;
 	float _colorKillPoint_speed = 0.05f; // 减少Alpha值的速度
@@ -67,10 +69,19 @@ public:
 		_colorKillPoint = {1, 1, 1, 1};
 		_scaleKillPoint = 1;
 	};
+	void AniStart_help() {
+		if (_colorHelp.w > 0) {
+			_colorHelp.w -= 0.01f;
+			if (_colorHelp.w < 0)
+				_colorHelp.w = 0;
+		}
+	}
 
 	const int& GetScore() const { return _score; };
 	void SetScore(const int& score) { _score = score; };
 	void SetColor_killPoint(const Vector4& color) { _colorKillPoint = color; };
+	const Vector4& GetColorHelp() const { return _colorHelp; };
+	void SetColorHelp(const Vector4& color) { _colorHelp = color; };
 };
 
 class DeadUI {

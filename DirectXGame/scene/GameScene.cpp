@@ -105,6 +105,7 @@ void GameScene::Update() {
 		_deadUIObj->SetIsRestart(false);
 		_startUIObj->SetIsStart(false);
 		_gameUIObj->SetColor_killPoint({1, 1, 1, 0});
+		_gameUIObj->SetColorHelp({1, 1, 1, 1});
 		// Next
 		UIManager::_currentScene = UIManager::Scene::Game;
 		break;
